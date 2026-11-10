@@ -182,6 +182,8 @@ export function Capsule(props: { children?: React.ReactNode }) {
   const capsuleDragSession = React.useRef<CapsuleDragSession>(undefined)
   const [dockHovered, setDockHovered] = React.useState(false)
   const [dockFocused, setDockFocused] = React.useState(false)
+  const [dockSettled, setDockSettled] = React.useState(false)
+  const dockSlideRef = React.useRef<HTMLDivElement>(null)
   const dockHideTimer = React.useRef<ReturnType<typeof setTimeout>>(undefined)
   const botStackLayout = React.useRef<AutoLayout>(undefined)
   /** 记录了布局快照、等提交后播放的 FLIP；在 useLayoutEffect 里取出执行。 */
@@ -237,6 +239,28 @@ export function Capsule(props: { children?: React.ReactNode }) {
   const capsuleDock = capsuleAnchor?.dock
   // 观察窗、拖动、首次引导与键盘焦点都需要完整胶囊，期间不收回。
   const dockHidden = !!capsuleDock && !capsuleDragging && !webQQOpen && !dockHovered && !dockFocused && !avatarGuideVisible
+
+  // 收起位移真正停到边缘后才淡出把手里的残留内容、显示未读红点。不能用固定延迟：松手时指针常压在头像上，
+  // 头像栈先展开再折叠会改写展开补偿，位移过渡被打断重来，实际收起时长不固定。
+  React.useEffect(() => {
+    if (!dockHidden) {
+      setDockSettled(false)
+      return
+    }
+    const slide = dockSlideRef.current
+    if (!slide) return
+    const sliding = slide.getAnimations().some((animation) => animation instanceof CSSTransition && animation.transitionProperty === 'translate')
+    // 首屏直接以收起态渲染或减少动态效果时没有过渡可等。
+    if (!sliding) {
+      setDockSettled(true)
+      return
+    }
+    const settle = (event: TransitionEvent) => {
+      if (event.target === slide && event.propertyName === 'translate') setDockSettled(true)
+    }
+    slide.addEventListener('transitionend', settle)
+    return () => slide.removeEventListener('transitionend', settle)
+  }, [dockHidden])
   // 收起时按折叠宽度位移：悬停展开的头像栈在收回过程中同时折叠，按展开宽度算会把把手也推出视口。
   const collapsedShellWidth = hasMultipleBots ? 162 + collapsedBotStackWidth : CAPSULE_SINGLE_WIDTH
   const shellWidth = botStackVisualExpanded && hasMultipleBots ? 162 + expandedBotStackWidth : collapsedShellWidth
@@ -679,6 +703,7 @@ export function Capsule(props: { children?: React.ReactNode }) {
         capsuleDragging ? 'is-dragging' : '',
         capsuleDock ? `is-docked-${capsuleDock}` : '',
         dockHidden ? 'is-dock-hidden' : '',
+        dockHidden && dockSettled ? 'is-dock-settled' : '',
       ].filter(Boolean).join(' ')}
       style={capsuleHostStyle}
       onPointerEnter={() => {
@@ -698,7 +723,7 @@ export function Capsule(props: { children?: React.ReactNode }) {
     >
       {/* 胶囊位移层：Anime.js FLIP 会给 layout root 加 transition: none !important 并接管其子节点 translate，
           展开补偿与贴边位移若放在 root 上，悬停把手时胶囊会瞬间跳出或与头像栈错位。 */}
-      <div className="onebot-webqq-dock-slide">
+      <div ref={dockSlideRef} className="onebot-webqq-dock-slide">
         <div ref={capsuleLayoutRef} className="onebot-webqq-layout-root" onPointerDown={startCapsuleDrag} onDragStart={blockCapsuleNativeDrag}>
           <div
             className={[
@@ -711,7 +736,6 @@ export function Capsule(props: { children?: React.ReactNode }) {
             style={capsuleStyle}
             aria-live="polite"
           >
-            {capsuleDock && showUnread ? <span className="onebot-webqq__dock-unread" aria-hidden="true"></span> : null}
             <div
               className={['onebot-webqq__avatar-capsule', hasMultipleBots ? 'has-bot-stack' : '', botStackVisualExpanded ? 'is-expanded' : ''].filter(Boolean).join(' ')}
               style={avatarCapsuleStyle}
@@ -854,6 +878,11 @@ export function Capsule(props: { children?: React.ReactNode }) {
           </div>
         </CssTransition>
       </div>
+      {/* 贴边把手的未读红点按屏幕边缘固定定位，不放进胶囊：头像栈 FLIP 期间胶囊内的绝对定位会停在旧宽度上，
+          收起时红点会和胶囊错开。host 不带位移，fixed 直接相对视口。 */}
+      {capsuleDock && showUnread
+        ? <span className={['onebot-webqq__dock-unread', `is-color-${resolvedColorMode}`].join(' ')} aria-hidden="true"></span>
+        : null}
       {props.children}
     </div>
   )

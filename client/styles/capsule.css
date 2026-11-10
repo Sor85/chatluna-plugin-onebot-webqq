@@ -558,7 +558,12 @@
 .onebot-webqq-host:is(.is-docked-left, .is-docked-right) .onebot-webqq__body {
   transition:
     margin-right var(--onebot-webqq-shift-transition),
-    translate var(--onebot-webqq-dock-duration) var(--onebot-webqq-dock-spring);
+    translate var(--onebot-webqq-dock-duration) var(--onebot-webqq-dock-spring),
+    opacity 0.12s ease;
+}
+
+.onebot-webqq-host:is(.is-docked-left, .is-docked-right) .onebot-webqq__avatar-capsule {
+  transition: width 0.18s ease, opacity 0.12s ease;
 }
 
 /* 收起：加速滑回边缘，不回弹。host 原位置不再拦截指针，只有留在视口内的把手响应悬停。 */
@@ -582,35 +587,56 @@
     translate 0.32s cubic-bezier(0.5, 0, 0.75, 0);
 }
 
+/* 收起后露出的把手只保留毛玻璃底与未读红点：贴右时把手是头像栈最左端，贴左时可能是长标题末尾，
+   内容被边缘切开会和红点叠在一起。滑动全程保持不透明，两侧动画才一致：位移过渡结束后 JS 加上
+   is-dock-settled，再淡出把手里残留的内容、淡入红点；滑出时内容立即恢复。
+   淡出用关键帧而不是过渡：收起时头像栈常常同时在折叠，Anime.js FLIP 会给头像容器加
+   transition: none !important，过渡被吞掉后头像会瞬间消失。 */
+.onebot-webqq-host.is-dock-settled :is(.onebot-webqq__avatar-capsule, .onebot-webqq__body) {
+  opacity: 0;
+  animation: onebot-webqq-dock-content-out 0.16s ease backwards;
+}
+
+@keyframes onebot-webqq-dock-content-out {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+/* 把手宽 18px、胶囊高 50px：红点落在把手内、距屏幕边缘 4px，垂直居中。 */
 .onebot-webqq__dock-unread {
-  position: absolute;
-  top: 50%;
-  z-index: 3;
+  position: fixed;
+  bottom: calc(var(--onebot-webqq-capsule-bottom, 56px) + 21px);
+  z-index: 10002;
   width: 8px;
   height: 8px;
-  margin-top: -4px;
   border-radius: 999px;
   background: #ef4444;
   box-shadow: 0 0 0 2px #ffffff;
   opacity: 0;
-  transition: opacity 0.2s ease;
+  transition: opacity 0.12s ease;
   pointer-events: none;
 }
 
-.onebot-webqq.is-color-dark .onebot-webqq__dock-unread {
+.onebot-webqq__dock-unread.is-color-dark {
   box-shadow: 0 0 0 2px #2c2c30;
 }
 
 .onebot-webqq-host.is-docked-right .onebot-webqq__dock-unread {
-  left: 6px;
+  right: 4px;
 }
 
 .onebot-webqq-host.is-docked-left .onebot-webqq__dock-unread {
-  right: 6px;
+  left: 4px;
 }
 
-.onebot-webqq-host.is-dock-hidden .onebot-webqq__dock-unread {
+.onebot-webqq-host.is-dock-settled .onebot-webqq__dock-unread {
   opacity: 1;
+  transition: opacity 0.16s ease;
 }
 
 @media (prefers-reduced-motion: reduce) {
