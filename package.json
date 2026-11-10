@@ -1,6 +1,6 @@
 {
   "name": "chatluna-plugin-onebot-webqq",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "在 ChatLuna WebUI 中提供 OneBot WebQQ 与聊天状态胶囊，显示 ChatLuna 的思考状态、内心活动、token 用量与好感度",
   "type": "module",
   "license": "MIT",
