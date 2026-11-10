@@ -1,5 +1,5 @@
 /* 右键菜单 / 资料卡 / 贴表情 / 多选 / Dialog：与 sandbox 关键尺寸、z-index 对齐。
-   注意：Teleport 到 body 的面板拿不到 .onebot-webqq-webqq 作用域变量，这里镜像一份 token。 */
+   注意：Portal 到 body 的面板拿不到 .onebot-webqq-webqq 作用域变量，这里镜像一份 token。 */
 .onebot-webqq-webqq__portal-page,
 .onebot-webqq-webqq__notice-menu--desktop,
 .webqq-dialog-content,
@@ -33,19 +33,17 @@
 }
 
 /* 毛玻璃外观（body[data-onebot-webqq-frosted] 由 useWebQQFrostedSurfaceFlag 写入）下，
-   Teleport 到 body 的实体二级面统一切换为雾化态：半透明面板色 + 背景模糊。
+   Portal 到 body 的实体二级面统一切换为雾化态：半透明面板色 + 背景模糊。
    本条必须位于上方 token 与下方实体态背景规则之后，靠层叠顺序覆盖同特异性的实心背景；
-   工作区层已禁用 backdrop-filter（ADR 0002），浮层的模糊才能真正采样到内容。 */
+   工作区层已禁用 backdrop-filter，浮层的模糊才能真正采样到内容。 */
 body[data-onebot-webqq-frosted] :is(.webqq-dialog-content,
-.webqq-context-menu-content,
-[data-slot=onebot-webqq-context-menu-content],
-[data-slot=onebot-webqq-context-menu-sub-content]) {
+.webqq-context-menu-content) {
   border-color: color-mix(in srgb, var(--webqq-secondary-outline) 64%, transparent);
   background: color-mix(in srgb, var(--webqq-panel) 72%, transparent);
 }
 
 /* 雾化对话框改由面板自身模糊背景；遮罩若保留 backdrop-filter 会成为
-   Backdrop Root 边界，反而让面板的模糊采样不到工作区内容（详见 ADR 0002）。 */
+   Backdrop Root 边界，反而让面板的模糊采样不到工作区内容。 */
 body[data-onebot-webqq-frosted] .webqq-dialog-overlay,
 body[data-onebot-webqq-frosted] [data-slot=dialog-overlay]:has(~ .webqq-dialog-content) {
 }
@@ -97,17 +95,6 @@ body[data-onebot-webqq-frosted] [data-slot=dialog-overlay]:has(~ .webqq-dialog-c
 
 .webqq-context-menu-item.is-danger[data-highlighted] {
   background: rgba(254, 242, 242, 0.96);
-}
-
-.webqq-context-menu-chevron {
-  margin-left: auto;
-}
-
-.webqq-dialog-layer {
-  position: fixed;
-  inset: 0;
-  z-index: 10200;
-  pointer-events: auto;
 }
 
 .webqq-dialog-overlay {
@@ -254,8 +241,7 @@ body[data-onebot-webqq-frosted] [data-slot=dialog-overlay]:has(~ .webqq-dialog-c
 /* UA popover 会写成 inset:0; margin:auto; background:Canvas。必须盖掉才能沿用现有定点定位。
    Top Layer 让 backdrop-filter 采样已经合成的观察窗，而不是被外壳 ::before 挡住。 */
 .onebot-webqq-webqq__portal-page[popover],
-.onebot-webqq-webqq__notice-menu[popover],
-.webqq-dialog-layer[popover] {
+.onebot-webqq-webqq__notice-menu[popover] {
   inset: unset;
   margin: 0;
   padding: 0;
@@ -269,17 +255,6 @@ body[data-onebot-webqq-frosted] [data-slot=dialog-overlay]:has(~ .webqq-dialog-c
   margin: 0;
   overflow: visible;
   color: inherit;
-}
-
-.webqq-dialog-layer[popover] {
-  inset: 0;
-  width: auto;
-  height: auto;
-  max-width: none;
-  max-height: none;
-  overflow: visible;
-  background: transparent;
-  border: 0;
 }
 
 /* 实体态必须同时覆盖不透明背景：基类是 92% 半透明 + blur 的雾化外观，
@@ -1207,25 +1182,6 @@ body:not([data-onebot-webqq-frosted]) .onebot-webqq-webqq__portal-page > .onebot
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.onebot-webqq-webqq__reply-draft-copy {
-  display: grid;
-  min-width: 0;
-  flex: 1;
-  gap: 2px;
-}
-
-.onebot-webqq-webqq__reply-draft-copy strong,
-.onebot-webqq-webqq__reply-draft-copy span {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.onebot-webqq-webqq__reply-draft-copy span {
-  color: #7a8494;
-  font-size: var(--onebot-webqq-font-sm);
 }
 
 .onebot-webqq-webqq__reply-draft-close {

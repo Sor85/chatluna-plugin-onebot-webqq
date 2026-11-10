@@ -1,12 +1,12 @@
 /**
  * 自定义滚动条的显隐时序。
  *
- * 提出来的是判定，不是 DOM 机械动作（ADR 0075）：轨道该现身还是该收起由「指针落在哪里、是不是
+ * 提出来的是判定，不是 DOM 机械动作：轨道该现身还是该收起由「指针落在哪里、是不是
  * 正在拖」共同决定，改坏了不会报错，只会表现为轨道赖着不走或在用户正要抓它时抽走。轨道元素的
- * 创建、样式写入、事件绑定与计时器仍然留在指令里。
+ * 创建、样式写入、事件绑定与计时器仍然留在 webqq-scrollbar.ts。
  *
- * 用命名转换而不是逐字段赋值，同样是 ADR 0075 的判据：`revealed`、`hideScheduled` 与「指针在
- * 哪」必须同拍变化。此前指令用一个 `hovering` 同时表示「指针在滚动区」和「指针在滑块上」，倒计时
+ * 用命名转换而不是逐字段赋值：`revealed`、`hideScheduled` 与「指针在
+ * 哪」必须同拍变化。此前实现用一个 `hovering` 同时表示「指针在滚动区」和「指针在滑块上」，倒计时
  * 到点的守卫读的是这一个字段，于是指针停在滚动区里也会把轨道钉成常显——指针静止时轨道永不消失。
  * 两种悬停的后果本就相反：停在滚动区只需要一次位置提示，停在滑块上才是「正要抓它」。
  */
@@ -34,7 +34,7 @@ export interface ScrollbarVisibility {
   readonly dragging: boolean
   /** 轨道此刻是否应当可见。 */
   readonly revealed: boolean
-  /** 是否应当有一个隐藏倒计时在跑；转成 false 时指令要把已有的计时器清掉。 */
+  /** 是否应当有一个隐藏倒计时在跑；转成 false 时 webqq-scrollbar.ts 要把已有的计时器清掉。 */
   readonly hideScheduled: boolean
 }
 
@@ -67,7 +67,7 @@ function reveal(state: ScrollbarVisibility): ScrollbarVisibility {
   return { ...state, revealed: true, hideScheduled: true }
 }
 
-/** 现身并钉住：不排倒计时，已排的由指令清掉。 */
+/** 现身并钉住：不排倒计时，已排的由 webqq-scrollbar.ts 清掉。 */
 function pin(state: ScrollbarVisibility): ScrollbarVisibility {
   return { ...state, revealed: true, hideScheduled: false }
 }

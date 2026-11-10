@@ -48,7 +48,7 @@ export function normalizeGroup(raw: unknown, scope: WebQQAvatarScope): WebQQGrou
   }
 }
 
-export function getRecentPeerType(raw: Record<string, unknown>, peerId: string, friends: WebQQFriend[], groups: WebQQGroup[]): WebQQChatType {
+export function getRecentPeerType(raw: Record<string, unknown>, peerId: string, groups: WebQQGroup[]): WebQQChatType {
   const chatType = getStringField(raw, ['chatType', 'chat_type', 'type'])
   if (chatType === '2' || chatType === 'group') return 'group'
   if (chatType === '1' || chatType === 'friend' || chatType === 'private') return 'friend'

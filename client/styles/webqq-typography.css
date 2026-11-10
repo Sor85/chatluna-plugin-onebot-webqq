@@ -1,15 +1,14 @@
 /* 排版基线与字号标度。
 
-   宿主 Koishi 控制台的 app/index.scss 只给 body 设 margin 与 font-family，不设 font-size，
-   所以任何没被插件显式声明字号的节点都会一路继承到浏览器默认的 16px。实测（真实 Chrome 152
-   与 Firefox 153，观察窗整树 221 个节点）治理前只有两个有文字的节点落在 16px：
-   .onebot-webqq-webqq__send-text 与 .onebot-webqq-webqq__send-placeholder。这两处写了
+   不依赖宿主继承的字号：任何没被插件显式声明字号的节点都会一路继承到宿主或浏览器默认值。
+   原插件实测（Chrome 152 与 Firefox 153，观察窗整树 221 个节点）治理前只有两个有文字的节点落在
+   16px：.onebot-webqq-webqq__send-text 与 .onebot-webqq-webqq__send-placeholder。这两处写了
    font: inherit（为压掉 contenteditable 与表单控件自带的字体族），于是草稿文字比同一个表单里的
    文件名（12px）和消息气泡（13px）都大一号。这类差异不会报错，只能靠显式基准根治。
 
-   Portal / Teleport 到 body 的浮层不在插件根的后代里，必须逐个列出自己的根选择器；漏掉任何一个，
+   Portal 到 body 的浮层不在插件根的后代里，必须逐个列出自己的根选择器；漏掉任何一个，
    那棵子树里的字号令牌会解析失败并退回继承值，失败形态和完全没有治理时一致。这份清单与
-   webqq-box-model.scss 的浮层清单必须一致，新增浮层时两处一起登记。 */
+   webqq-box-model.css 的浮层清单必须一致，新增浮层时两处一起登记。 */
 .onebot-webqq-host,
 .webqq-context-menu-content,
 .webqq-dialog-content,

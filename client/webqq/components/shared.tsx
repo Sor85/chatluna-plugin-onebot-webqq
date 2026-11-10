@@ -1,4 +1,3 @@
-import * as React from 'react'
 import { IconAt, IconAward, IconHandClick, IconTag, IconUserMinus, IconUserPlus } from '@tabler/icons-react'
 import { useT } from '../../i18n'
 import type { WebQQChatStyle } from '../../../src/config/spec'
@@ -108,10 +107,4 @@ export function WebQQMessageReactions(props: {
       })}
     </div>
   )
-}
-
-export function useStableCallback<T extends (...args: never[]) => unknown>(callback: T): T {
-  const ref = React.useRef(callback)
-  ref.current = callback
-  return React.useCallback(((...args) => ref.current(...args)) as T, [])
 }

@@ -3,7 +3,7 @@
  *
  * 提出来的是判定而不是 DOM 机械动作：观察窗最小 640×420、默认还按 1040/656 的比例撑开，入口一旦被
  * 拖到视口上半部分，「贴着入口上沿打开」就会把窗体顶出视口。改坏了不会报错，只会表现为观察窗缺了
- * 一角或整块跑到屏幕外。元素测量与样式写入留在 WebQQObserver.vue。
+ * 一角或整块跑到屏幕外。元素测量与样式写入留在 observer.tsx。
  */
 
 /** 入口在视口右下角坐标系里的位置与高度。宽度与落位无关：观察窗只按入口的右缘对齐。 */
@@ -28,7 +28,7 @@ export interface WebQQPanelAnchor {
   readonly bottom: number
 }
 
-/** 观察窗与入口之间的间隙：与 webqq-shell.scss 默认的 `bottom: 116px` = 锚点 56px + 入口 50px + 10px 同源。 */
+/** 观察窗与入口之间的间隙：与 webqq-shell.css 默认的 `bottom: 116px` = 锚点 56px + 入口 50px + 10px 同源。 */
 export const WEBQQ_PANEL_ENTRY_GAP = 10
 
 /** 观察窗与视口左右缘的最小间距：与默认宽度 `min(100vw - 32px, …)` 配 `right: 24px` 时的左缘留白同源。 */

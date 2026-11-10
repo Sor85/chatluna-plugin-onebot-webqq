@@ -1,13 +1,9 @@
 import type { Config } from '../../config/schema'
 import { readConfigValue } from '../../config/spec'
 import { isRecord } from '../../shared/record'
-import type { WebQQChatType, WebQQMessage, WebQQMessageCachePayload, WebQQMessageCacheQuery, WebQQMessageElement, WebQQMessageReaction, WebQQMessageReactionUser } from '../types'
+import type { WebQQMessage, WebQQMessageCachePayload, WebQQMessageCacheQuery, WebQQMessageElement, WebQQMessageReaction, WebQQMessageReactionUser } from '../types'
 import { chatCapsuleStorageTable, getWebQQDatabase, type WebQQStorageContext } from './schema'
 import { getWebQQMessageStorageId } from './scope'
-
-// 载荷类型住在零 koishi 依赖的 ../types 里（本 module 引用了配置入口与数据库机件，控制台契约
-// 不能经由它取类型）。这里 re-export，服务端既有消费方的 import 路径一处不动。
-export type { WebQQMessageCachePayload, WebQQMessageCacheQuery } from '../types'
 
 function readStringField(source: Record<string, unknown>, key: string) {
   const value = source[key]

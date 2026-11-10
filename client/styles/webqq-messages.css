@@ -713,11 +713,6 @@
   color: #0b7fab;
 }
 
-.onebot-webqq-webqq__sender-badge.is-relationship {
-  background: rgba(99, 102, 241, 0.12);
-  color: #4338ca;
-}
-
 .onebot-webqq-webqq.is-chat-style-tim .onebot-webqq-webqq__message-body {
   flex-direction: row;
   align-items: flex-end;

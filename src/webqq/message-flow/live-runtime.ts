@@ -43,8 +43,6 @@ type WebQQReplyPatch = Pick<WebQQMessage, 'thinking' | 'usage'>
 const WEBQQ_LIVE_CONVERSATION_LIMIT = 100
 const WEBQQ_LIVE_SENDER_METADATA_LIMIT = 1000
 
-export type WebQQLiveRuntime = ReturnType<typeof createWebQQLiveRuntime>
-
 function readRawRecallMessageId(session: Session) {
   const data = (session.event as { _data?: Record<string, unknown> })._data
   const value = data?.message_id ?? data?.messageId ?? data?.msg_id ?? data?.msgId

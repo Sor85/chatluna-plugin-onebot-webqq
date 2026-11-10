@@ -1,5 +1,5 @@
 import { callAction, subscribeLive } from '@chatluna/ui-client/client'
-import { readConfigDefault, readMirroredConfigValues, type MirroredConfigValues } from '../src/config/spec'
+import { readMirroredConfigValues, type MirroredConfigValues } from '../src/config/spec'
 import type { CapsuleSnapshot } from '../src/capsule/state/types'
 import type { ConsoleRequests, WebQQEvent } from '../src/shared/console-contract'
 import { EVENTS_STATE, RUNTIME_STATE } from '../src/shared/console-contract'
@@ -110,5 +110,3 @@ export function connectRuntime() {
     webQQTotalUnread.set(0)
   }
 }
-
-export { readConfigDefault }

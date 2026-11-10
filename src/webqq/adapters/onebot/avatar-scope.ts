@@ -8,7 +8,7 @@ import { readWebQQProvidedAvatar, type WebQQAvatarScope } from '../../display'
  * 判据是「数据来自哪台机器人」而不是一个全局模式：虚拟机器人的 id 是提供方场景里的编号，
  * 真实机器人的 id 是 QQ 号。两者混在同一个运行时里时，这个判断也仍然逐条成立。
  *
- * ADR 0001：`webqq/message-flow/` 不直接 import `onebot/*`，OneBot 派生的判断由本层提供。
+ * `webqq/message-flow/` 不直接 import `onebot/*`，OneBot 派生的判断由本层提供。
  */
 export function readOneBotAvatarScope(bot: { platform?: unknown; hidden?: unknown }): WebQQAvatarScope {
   return { synthesizeQQAvatars: !isVirtualOneBotBot(bot) }

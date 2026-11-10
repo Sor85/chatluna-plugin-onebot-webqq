@@ -64,12 +64,10 @@ import {
   type WebQQAvatarScope,
 } from '../../display'
 import type {
-  WebQQChatType,
   WebQQContacts,
   WebQQForwardSendInput,
   WebQQFriend,
   WebQQFriendAction,
-  WebQQFriendCategory,
   WebQQGroup,
   WebQQGroupAction,
   WebQQGroupInfo,
@@ -90,10 +88,6 @@ import type {
   WebQQSendElement,
   WebQQSendPayload,
 } from '../../types'
-
-function toStringId(value: unknown) {
-  return value == null ? '' : String(value)
-}
 
 function getOneBotStatusName(status: unknown) {
   switch (status) {
@@ -152,7 +146,7 @@ async function normalizeRecentContact(raw: unknown, bot: OneBotBot, friends: Web
   const item = isRecord(raw) ? raw : {}
   const peerId = getStringField(item, ['peerUin', 'peer_uin', 'uin', 'user_id', 'group_id'])
   if (!peerId) return
-  const type = getRecentPeerType(item, peerId, friends, groups)
+  const type = getRecentPeerType(item, peerId, groups)
   const friend = type === 'friend' ? friends.find((value) => value.userId === peerId) : undefined
   const group = type === 'group' ? groups.find((value) => value.groupId === peerId) : undefined
   const rawName = getStringField(item, ['remark', 'peerName', 'peer_name', 'name', 'nick', 'nickname'])

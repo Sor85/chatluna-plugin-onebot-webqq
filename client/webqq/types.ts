@@ -6,8 +6,7 @@ import type { WebQQGroupMember } from '../../src/webqq/types'
 // 不做别名导出。别名等于在类型层重造刚在事件名层消灭的「一个东西两个名字」——将来有人在客户端
 // grep 服务端的类型名会一无所获，正是控制台契约要消除的那种困惑。
 //
-// ADR 0003：这条跨端 import 边只能指向零 koishi 依赖的 module，否则整个 koishi 会被静默打进浏览器
-// 产物。由 tests/console-contract.test.ts 的 import 图守卫兜底。
+// 这条跨端 import 边只能指向不引用服务端运行时的 module，否则服务端依赖会被静默打进浏览器产物。
 export type * from '../../src/webqq/types'
 
 // 客户端专属：群成员排序只有界面用得上，不属于载荷类型。

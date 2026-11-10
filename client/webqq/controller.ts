@@ -127,11 +127,6 @@ export interface WebQQForwardTargetModel {
   groups: WebQQForwardTargetOption[]
 }
 
-export interface WebQQShellSize {
-  width: number
-  height: number
-}
-
 type WebQQGroupMemberPatch = Partial<Pick<WebQQGroupMember, 'card' | 'role' | 'rawRole' | 'title'>>
 const groupMemberPatchFields = ['card', 'role', 'rawRole', 'title'] as const
 

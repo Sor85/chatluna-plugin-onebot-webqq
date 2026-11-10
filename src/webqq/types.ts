@@ -309,10 +309,8 @@ export interface WebQQSelfProfileUpdate {
   avatar?: string
 }
 
-// 存储与缓存那四条控制台请求的载荷类型。它们原来住在 ./storage/state.ts 与
-// ./storage/message-cache.ts 里，那两个 module 引用了配置入口与数据库机件；类型本身零 koishi
-// 内容，只是住错了地方。控制台契约要被前端引用，按 ADR 0003 那条明线，它引用的每个类型都必须
-// 住在零 koishi 依赖的 module 里，所以搬到这里。原处改成 re-export，服务端消费方的 import 不动。
+// 存储与缓存那四条控制台请求的载荷类型。控制台契约要被前端引用，它引用的类型不能住在
+// ./storage 下那些引用配置入口与数据库的 module 里，否则服务端依赖会被打进浏览器产物。
 export interface WebQQConversationSummary {
   summary: string
   time: number

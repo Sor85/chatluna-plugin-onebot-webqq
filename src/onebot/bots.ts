@@ -89,7 +89,7 @@ export function getAvailableOneBotBots(
   })
 }
 
-// Koishi 重启后适配器可能长时间上报 OFFLINE/CONNECT，即使 action 通道早已可用。
+// 宿主重启后适配器可能长时间上报 OFFLINE/CONNECT，即使 action 通道早已可用。
 // 这类 Bot 过去只能靠「等一条外部消息」触发 noteBotActivity 才会变可用，首屏因此加载失败。
 // 这里挑出所有不自报就绪的 Bot 作为主动探测对象；已经如实上报在线的无需探测。
 // 注意不能排除「当前靠活动覆盖才可用」的 Bot，否则覆盖会在 5 分钟后过期并造成可用性抖动。

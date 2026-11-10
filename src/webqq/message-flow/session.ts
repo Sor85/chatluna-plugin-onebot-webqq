@@ -14,10 +14,6 @@ export function readBotProfile(session: Session) {
   }
 }
 
-export function readChannelName(session: Session) {
-  return session.event.guild?.name || session.event.channel?.name
-}
-
 export function readMemberName(session: Session) {
   return session.event.member?.name || session.event.member?.nick
 }

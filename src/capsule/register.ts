@@ -132,5 +132,3 @@ export function registerCapsule(options: {
     },
   }
 }
-
-export type CapsuleRuntime = ReturnType<typeof registerCapsule>

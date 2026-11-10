@@ -1,14 +1,11 @@
 /* 盒模型基线：插件全部布局按 border-box 计算，这一份声明必须由插件自己给出。
 
-   宿主 Koishi 控制台不提供 `* { box-sizing }` reset —— @koishijs/client 的 app/index.scss
-   只给 body 设 margin 与 font-family，逐个组件才各自写 border-box。开发环境里若恰好有
-   别的插件注入过全局 reset，本插件会「借到」border-box 并表现正常；生产环境缺少那份 reset
-   时，同一份样式退回浏览器默认的 content-box，min-height 与 padding 改为相加：
-   右键菜单项从 36px 撑到 52px（×1.44），width: 100% 的菜单项再横向溢出 20px，
-   被菜单的 overflow: hidden 裁掉，表现为「行距被拉开 + 高亮块贴边」。
-   这类差异不会报错，只能靠显式声明根治。
+   不依赖宿主或其他插件注入的全局 reset。缺少 reset 时，同一份样式退回浏览器默认的
+   content-box，min-height 与 padding 改为相加：右键菜单项从 36px 撑到 52px（×1.44），
+   width: 100% 的菜单项再横向溢出 20px，被菜单的 overflow: hidden 裁掉，表现为
+   「行距被拉开 + 高亮块贴边」。这类差异不会报错，只能靠显式声明根治。
 
-   Portal / Teleport 到 body 的浮层不在胶囊根的后代里，必须逐个列出自己的根选择器；
+   Portal 到 body 的浮层不在胶囊根的后代里，必须逐个列出自己的根选择器；
    漏掉任何一个，那棵子树的失败形态与完全没有治理时一致。 */
 .onebot-webqq-host,
 .onebot-webqq-host *,

@@ -1,7 +1,7 @@
 import type { WebQQMessageElement } from '../types'
 import type { OneBotBot } from '../../onebot/actions'
 import { getNumberField, getStringField } from '../../onebot/data'
-import { resolveOneBotRecord, transcribeOneBotRecord } from '../../onebot/media/records'
+import { resolveOneBotRecord } from '../../onebot/media/records'
 import { isUnresolvableMediaSource, resolveWebQQMediaUrl } from './image-url-resolver'
 
 export async function normalizeRecordElement(data: Record<string, unknown>, bot: OneBotBot, mediaUrlResolver?: (file: string) => string): Promise<WebQQMessageElement> {
@@ -25,5 +25,3 @@ export async function normalizeRecordElement(data: Record<string, unknown>, bot:
     return base
   }
 }
-
-export { transcribeOneBotRecord }

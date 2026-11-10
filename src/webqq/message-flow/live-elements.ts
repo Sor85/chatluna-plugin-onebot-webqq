@@ -19,7 +19,7 @@ function normalizeLiveQuoteMarkupText(value: string) {
     /<(?:[\w-]+:)?(?:msg|at|qqbot-at-user|img|image|mface|file|face|record|audio|video)\b/i.test(source)
   if (!hasMarkup) return normalizeMentionMarkupText(source)
 
-  // 新消息的引用内容可能是 OneBot 适配器塞进 Koishi live element 的 XML 文本；
+  // 新消息的引用内容可能是 OneBot 适配器塞进 Satori 元素的 XML 文本；
   // 历史消息会先走 segment 解析。这里在引用边界压成摘要，避免 UI 直接露出 XML。
   const normalizedMedia = source
     .replace(/<(?:[\w-]+:)?(?:img|image|mface)\b[^>]*\/?>/gi, '[图片]')

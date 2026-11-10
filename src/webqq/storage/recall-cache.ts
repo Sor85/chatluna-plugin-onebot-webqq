@@ -1,12 +1,9 @@
 import type { Config } from '../../config/schema'
 import { readConfigValue } from '../../config/spec'
 import { isRecord } from '../../shared/record'
+import type { WebQQMessageCachePayload, WebQQMessageCacheQuery } from '../types'
 import { chatCapsuleStorageTable, type WebQQStorageContext } from './schema'
-import {
-  readWebQQStoredMessages,
-  type WebQQMessageCachePayload,
-  type WebQQMessageCacheQuery,
-} from './message-cache'
+import { readWebQQStoredMessages } from './message-cache'
 import { getWebQQRecalledMessageStorageId } from './scope'
 
 export async function loadDatabaseWebQQRecalledMessageCache(ctx: WebQQStorageContext, query: WebQQMessageCacheQuery, scopeId?: string) {

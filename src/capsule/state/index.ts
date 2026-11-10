@@ -191,14 +191,11 @@ export function getCurrentThinkingDurationMs(capsule: CapsuleState, now = Date.n
   return readThinkingDurationMs(getState(capsule), now) ?? 0
 }
 
-function copyIdleConversation(conversation: CapsuleSnapshot['conversation'], activityText?: string) {
+function copyIdleConversation(conversation: CapsuleSnapshot['conversation']) {
   return {
     channelId: conversation.channelId,
     channelName: conversation.channelName,
     timestamp: conversation.timestamp,
-    ...(activityText ? {
-      activityText,
-    } : {}),
     ...(conversation.thinkingDurationMs != null ? {
       thinkingDurationMs: conversation.thinkingDurationMs,
     } : {}),
@@ -221,24 +218,6 @@ export function clearConversationActivity(capsule: CapsuleState, now = Date.now(
       } : {}),
     }),
   }
-}
-
-// 日程插件只应该填充空闲文案，不能覆盖正在思考或正在对话的用户态。
-export function recordIdleActivity(capsule: CapsuleState, activityText: string) {
-  const state = getState(capsule)
-  const text = activityText.trim()
-  if (!state.current || !text) return false
-
-  const conversation = state.current.conversation
-  if (conversation.activityText === '正在思考' || conversation.userId || conversation.userName) return false
-  if (conversation.activityText === text) return false
-
-  state.thinkingStartedAt = undefined
-  state.current = {
-    ...state.current,
-    conversation: copyIdleConversation(conversation, text),
-  }
-  return true
 }
 
 // 记录插件启动后的发送消息计数。
