@@ -14,7 +14,14 @@ ChatLuna v2 外部插件，由 `koishi-plugin-onebot-webqq` 迁移。保留原�
 2. `yarn workspace chatluna-plugin-onebot-webqq typecheck`
 3. `yarn workspace chatluna-plugin-onebot-webqq test`
 
-测试包括生产 CSS 守卫，必须先构建。发布前清理副本的 `lib`、`dist`、`tsconfig.tsbuildinfo` 再构建，防止增量构建留下旧声明。构建成功不代表已经发布。
+测试包括生产 CSS 守卫，必须先构建。构建成功不代表已经发布。
+
+## 发布
+
+- 在本机执行 `node scripts/publish.mjs`；`--dry-run` 只演练，账号开了两步验证时加 `--otp=<验证码>`。不经 yarn：本目录没有 `yarn.lock`，Yarn 4 会在启动脚本前报错；无交互终端时 npm 不等浏览器授权，直接以 `EOTP` 退出。
+- 脚本要求工作区干净、提交已推送、npm 已登录、`v<版本>` tag 不存在。它同步副本，清空 `lib`、`dist`、`tsconfig.tsbuildinfo` 后构建、类型检查与测试，再 `yarn pack`、解压后从目录 `npm publish`，最后打 `v<版本>` tag 并推送。发版前只需修改并推送 `package.json` 的 `version`。
+- 清空产物：同步不清理旧产物，残留的已删除模块声明会被打进包；`tsconfig.tsbuildinfo` 还在时 tsc 不重新生成声明。`yarn pack` 才会改写 `workspace:*`。从目录发布时 npm 才把 README 写进 `readme` 元数据，插件市场详情页读的是它。
+- npm 可能先出现 `0.0.0-stage` 占位版本，确认 `latest` 指向新版本前不判定为发布失败。v2 公开前不走 CI 发布。
 
 ## 数据安全
 
