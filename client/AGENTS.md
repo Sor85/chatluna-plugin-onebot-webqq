@@ -12,4 +12,8 @@
 - 浏览器偏好统一通过 `@chatluna/ui-storage`；消息缓存保留 IndexedDB。界面文案写 `locales/zh.yml` / `en.yml` 并保持键及插值参数相同；协议消息原文不翻译。
 - v2 `useTranslate` 的引用不会随语言改变，记忆化渲染使用 `i18n.ts` 的 `useT`；树外控制器通过 `tr` 取得当前翻译。
 - 原生文件选择和 contenteditable 消息编辑器保留其输入语义。其他基础控件优先使用 ui-kit。不增加 cursor 样式，不关闭宿主组件自带的交互反馈。
-- 胶囊贴边与展开补偿只对 `.onebot-webqq-layout-root` 和 `.onebot-webqq__body` 使用 `translate`，不能加在 `.onebot-webqq-host` 上：host 带位移会成为 fixed 摘要与观察窗的包含块。胶囊以右缘为锚点，锚点 `right` 按测量时的宽度夹取，会因机器人列表晚到或头像栈展开而过期，位移按右缘推算（见 `capsule.tsx` 的 `dockOffset` / `capsuleShift`）。贴边判定规则在 `capsule-anchor.ts`，由 `tests/capsule-dock.test.ts` 覆盖。
+- 胶囊位移不能加在 `.onebot-webqq-host` 上：host 带位移会成为 fixed 摘要与观察窗的包含块。也不能加在 `.onebot-webqq-layout-root` 上：Anime.js `createLayout` 在 record / animate 时给 root 加 `transition: none !important` 并接管子节点的 `translate`，root 自身的位移会瞬间跳变或与头像栈错位。它只屏蔽带 `transform` 的祖先，因此位移放在外层 `.onebot-webqq-dock-slide`，摘要 `.onebot-webqq__body` 用一一对应的规则同步。
+  - 展开补偿与贴边位移分属两个属性：补偿用 `left` / `margin-right`，时长曲线等同头像栈 FLIP，展开时左缘不动；贴边用 `translate` 带弹簧。两者共用一个属性会让左缘来回越出视口，指针反复进出头像栈造成抖动。
+  - 胶囊以右缘为锚点，锚点 `right` 按测量时的宽度夹取，会因机器人列表晚到或头像栈展开而过期，位移按右缘推算（见 `capsule.tsx` 的 `dockOffset` / `capsuleShift`）。贴边判定规则在 `capsule-anchor.ts`，由 `tests/capsule-dock.test.ts` 覆盖。
+  - 滑出与收起动画分别写在 `is-docked-*` 和 `is-dock-hidden` 规则里，因为 CSS 过渡采用目标状态的参数。弹簧曲线 `linear()` 放在 `@supports` 中，外面保留 `cubic-bezier` 作为回退：同一规则里的回退声明会被压缩器合并掉。
+- 只执行一次的挂载 effect 不能持有会影响可见状态的计时器：开发环境 StrictMode 与 HMR 会先卸载再挂载，计时器被清掉后状态会卡住。头像引导的收起计时因此由依赖引导状态的 effect 管理。

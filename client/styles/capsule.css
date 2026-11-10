@@ -496,28 +496,90 @@
   transform: translateY(2px) scale(0.98);
 }
 
-/* 贴边隐藏：只位移胶囊本体与摘要文字。host 不能带 transform / translate，
-   否则会成为 fixed 摘要与观察窗的包含块；translate 与头像栈 FLIP 的 transform 互不覆盖。 */
-.onebot-webqq-host :is(.onebot-webqq-layout-root, .onebot-webqq__body) {
-  /* 头像栈展开越出左缘时的补偿位移（JS 写入「x y」），节奏与胶囊宽度过渡一致。 */
-  translate: var(--onebot-webqq-capsule-shift, none);
-  transition: translate 0.18s ease;
+/* 胶囊位移只放在 dock-slide 与摘要文字上，两者规则一一对应。host 不能带 transform / translate，
+   否则会成为 fixed 摘要与观察窗的包含块；layout root 也不能带：Anime.js FLIP 会临时禁用它的过渡，
+   并按 root 坐标给头像栈写入内联 translate，root 自身再位移会和外层叠加错位。
+   展开补偿与贴边位移分开走两个属性，各用各的过渡：
+   - 展开补偿（left / margin-right）：时长与曲线等同头像栈 FLIP（260ms out(3)），左缘在展开中保持不动；
+     若与贴边弹簧共用 translate，左缘会来回越出视口，指针反复进出头像栈造成展开、收起抖动。
+   - 贴边位移（translate）：按扣除补偿后的偏移收起，滑出带回弹。 */
+.onebot-webqq-host {
+  --onebot-webqq-shift-transition: 0.26s cubic-bezier(0.33, 1, 0.68, 1);
+  --onebot-webqq-dock-spring: cubic-bezier(0.22, 1.2, 0.36, 1);
+  --onebot-webqq-dock-duration: 0.5s;
 }
 
-/* 收起后 host 原位置不再拦截指针，只有留在视口内的把手响应悬停。 */
+@supports (transition-timing-function: linear(0, 1)) {
+  .onebot-webqq-host {
+    /* 阻尼约 0.7 的弹簧，过冲约 4.6%。 */
+    --onebot-webqq-dock-spring: linear(0, 0.039, 0.134, 0.26, 0.396, 0.53, 0.652, 0.757, 0.844, 0.913, 0.964, 1.001, 1.025, 1.038, 1.045, 1.046, 1.043, 1.038, 1.032, 1.026, 1.02, 1.014, 1.01, 1.006, 1.003, 1.001, 1, 0.999, 0.998, 0.998, 1);
+    --onebot-webqq-dock-duration: 0.6s;
+  }
+}
+
+.onebot-webqq-dock-slide {
+  position: relative;
+  left: var(--onebot-webqq-capsule-shift, 0px);
+  display: block;
+  height: 50px;
+  transition: left var(--onebot-webqq-shift-transition);
+}
+
+.onebot-webqq-host .onebot-webqq__body {
+  margin-right: calc(-1 * var(--onebot-webqq-capsule-shift, 0px));
+  transition: margin-right var(--onebot-webqq-shift-transition);
+}
+
+/* 滑出后胶囊离屏幕边缘还有一段边距；指针若停在这段边距里，胶囊会滑离指针、触发离开再收起。
+   贴边时把命中区延伸到屏幕边缘外，覆盖这段边距与弹簧过冲。 */
+.onebot-webqq-host:is(.is-docked-left, .is-docked-right) .onebot-webqq-dock-slide::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 24px;
+}
+
+.onebot-webqq-host.is-docked-right .onebot-webqq-dock-slide::after {
+  left: 100%;
+}
+
+.onebot-webqq-host.is-docked-left .onebot-webqq-dock-slide::after {
+  right: 100%;
+}
+
+/* 滑出：轻微回弹到位。 */
+.onebot-webqq-host:is(.is-docked-left, .is-docked-right) .onebot-webqq-dock-slide {
+  transition:
+    left var(--onebot-webqq-shift-transition),
+    translate var(--onebot-webqq-dock-duration) var(--onebot-webqq-dock-spring);
+}
+
+.onebot-webqq-host:is(.is-docked-left, .is-docked-right) .onebot-webqq__body {
+  transition:
+    margin-right var(--onebot-webqq-shift-transition),
+    translate var(--onebot-webqq-dock-duration) var(--onebot-webqq-dock-spring);
+}
+
+/* 收起：加速滑回边缘，不回弹。host 原位置不再拦截指针，只有留在视口内的把手响应悬停。 */
 .onebot-webqq-host.is-dock-hidden {
   pointer-events: none;
 }
 
-.onebot-webqq-host.is-dock-hidden :is(.onebot-webqq-layout-root, .onebot-webqq__body) {
-  translate: var(--onebot-webqq-dock-offset, 0) 0;
+.onebot-webqq-host.is-dock-hidden .onebot-webqq-dock-slide {
+  translate: var(--onebot-webqq-dock-slide, 0px) 0;
   pointer-events: auto;
+  transition:
+    left var(--onebot-webqq-shift-transition),
+    translate 0.32s cubic-bezier(0.5, 0, 0.75, 0);
 }
 
-/* 贴边胶囊的滑出与收起同速。 */
-.onebot-webqq-host:is(.is-docked-left, .is-docked-right) :is(.onebot-webqq-layout-root, .onebot-webqq__body) {
-  transition-duration: 0.32s;
-  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+.onebot-webqq-host.is-dock-hidden .onebot-webqq__body {
+  translate: var(--onebot-webqq-dock-slide, 0px) 0;
+  pointer-events: auto;
+  transition:
+    margin-right var(--onebot-webqq-shift-transition),
+    translate 0.32s cubic-bezier(0.5, 0, 0.75, 0);
 }
 
 .onebot-webqq__dock-unread {
@@ -552,7 +614,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .onebot-webqq-host :is(.onebot-webqq-layout-root, .onebot-webqq__body),
+  .onebot-webqq-host :is(.onebot-webqq-dock-slide, .onebot-webqq__body),
+  .onebot-webqq-host:is(.is-docked-left, .is-docked-right) :is(.onebot-webqq-dock-slide, .onebot-webqq__body),
   .onebot-webqq__dock-unread {
     transition: none;
   }

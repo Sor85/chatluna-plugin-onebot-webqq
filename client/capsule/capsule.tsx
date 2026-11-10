@@ -163,7 +163,8 @@ export function Capsule(props: { children?: React.ReactNode }) {
   const [cachedBotProfile, setCachedBotProfile] = React.useState(readCachedBotProfile)
   const [avatarGuideVisible, setAvatarGuideVisible] = React.useState(false)
   const avatarGuideMotion = React.useMemo(() => createAvatarGuideMotion(), [])
-  const avatarGuideTimer = React.useRef<ReturnType<typeof setTimeout>>(undefined)
+  // 每次显示引导递增，用来重启自动收起计时。
+  const [avatarGuideRun, setAvatarGuideRun] = React.useState(0)
   const [botStackExpanded, setBotStackExpandedState] = React.useState(false)
   const botStackHovered = React.useRef(false)
   const botStackFocused = React.useRef(false)
@@ -259,8 +260,9 @@ export function Capsule(props: { children?: React.ReactNode }) {
       '--onebot-webqq-capsule-right': `${capsuleAnchor.right}px`,
       '--onebot-webqq-capsule-bottom': `${capsuleAnchor.bottom}px`,
     } : {}),
-    ...(capsuleDock ? { '--onebot-webqq-dock-offset': `${dockOffset}px` } : {}),
-    ...(capsuleShift ? { '--onebot-webqq-capsule-shift': `${capsuleShift}px 0` } : {}),
+    // 贴边位移叠加在展开补偿之上，因此扣掉补偿。
+    ...(capsuleDock ? { '--onebot-webqq-dock-slide': `${dockOffset - capsuleShift}px` } : {}),
+    ...(capsuleShift ? { '--onebot-webqq-capsule-shift': `${capsuleShift}px` } : {}),
   } as React.CSSProperties
   const capsuleStyle = (hasMultipleBots ? {
     '--onebot-webqq-shell-collapsed-width': `${162 + collapsedBotStackWidth}px`,
@@ -513,11 +515,7 @@ export function Capsule(props: { children?: React.ReactNode }) {
   // pointercancel 收走指针序列，表现为「拖不动」。整枚胶囊没有需要原生拖放的内容，无条件取消。
   const blockCapsuleNativeDrag = (event: React.DragEvent) => event.preventDefault()
 
-  const hideAvatarGuide = () => {
-    setAvatarGuideVisible(false)
-    clearTimeout(avatarGuideTimer.current)
-    avatarGuideTimer.current = undefined
-  }
+  const hideAvatarGuide = () => setAvatarGuideVisible(false)
 
   const showAvatarGuide = (remember = false) => {
     if (webQQOpenStore.get()) return
@@ -525,12 +523,16 @@ export function Capsule(props: { children?: React.ReactNode }) {
     // 已经在显示时再点：节点不会重新挂载，波纹时间轴必须手动从头跑，否则这一次点击可能正好落在两圈波纹之间。
     if (avatarGuideVisible) avatarGuideMotion.restart()
     setAvatarGuideVisible(true)
-    clearTimeout(avatarGuideTimer.current)
-    avatarGuideTimer.current = setTimeout(() => {
-      setAvatarGuideVisible(false)
-      avatarGuideTimer.current = undefined
-    }, 3600)
+    setAvatarGuideRun((run) => run + 1)
   }
+
+  // 收起计时跟随引导状态，而不是挂在只执行一次的挂载 effect 里：StrictMode 与 HMR 会先卸载再挂载，
+  // 卸载清掉计时后，再次挂载读到「已看过」不会重新显示，引导就永远停在可见状态，贴边胶囊也收不回去。
+  React.useEffect(() => {
+    if (!avatarGuideVisible) return
+    const timer = setTimeout(() => setAvatarGuideVisible(false), 3600)
+    return () => clearTimeout(timer)
+  }, [avatarGuideVisible, avatarGuideRun])
 
   const toggleWebQQ = () => {
     const next = !webQQOpenStore.get()
@@ -619,7 +621,6 @@ export function Capsule(props: { children?: React.ReactNode }) {
       botStackLayout.current = undefined
       clearTimeout(botStackOverflowMotionTimer.current)
       clearTimeout(suppressStackCollapseTimer.current)
-      clearTimeout(avatarGuideTimer.current)
       clearTimeout(dockHideTimer.current)
       avatarGuideMotion.destroy()
     }
@@ -695,111 +696,115 @@ export function Capsule(props: { children?: React.ReactNode }) {
         if (!(nextTarget instanceof Node && event.currentTarget.contains(nextTarget))) setDockFocused(false)
       }}
     >
-      <div ref={capsuleLayoutRef} className="onebot-webqq-layout-root" onPointerDown={startCapsuleDrag} onDragStart={blockCapsuleNativeDrag}>
-        <div
-          className={[
-            'onebot-webqq',
-            config.enableCapsuleFrostedGlass ? 'is-frosted' : 'is-plain',
-            `is-color-${resolvedColorMode}`,
-            botStackVisualExpanded ? 'is-bot-stack-expanded' : '',
-            config.useCompactCapsuleShadow ? '' : 'is-capsule-shadow-wide',
-          ].filter(Boolean).join(' ')}
-          style={capsuleStyle}
-          aria-live="polite"
-        >
-          {capsuleDock && showUnread ? <span className="onebot-webqq__dock-unread" aria-hidden="true"></span> : null}
+      {/* 胶囊位移层：Anime.js FLIP 会给 layout root 加 transition: none !important 并接管其子节点 translate，
+          展开补偿与贴边位移若放在 root 上，悬停把手时胶囊会瞬间跳出或与头像栈错位。 */}
+      <div className="onebot-webqq-dock-slide">
+        <div ref={capsuleLayoutRef} className="onebot-webqq-layout-root" onPointerDown={startCapsuleDrag} onDragStart={blockCapsuleNativeDrag}>
           <div
-            className={['onebot-webqq__avatar-capsule', hasMultipleBots ? 'has-bot-stack' : '', botStackVisualExpanded ? 'is-expanded' : ''].filter(Boolean).join(' ')}
-            style={avatarCapsuleStyle}
-            onPointerEnter={() => {
-              botStackHovered.current = true
-              syncBotStackExpanded()
-            }}
-            onPointerLeave={() => {
-              botStackHovered.current = false
-              syncBotStackExpanded()
-            }}
-            onFocus={() => {
-              botStackFocused.current = true
-              syncBotStackExpanded()
-            }}
-            onBlur={(event) => {
-              // 焦点仍落在胶囊内部（Tab 切换头像）时不算离开。
-              const nextTarget = event.relatedTarget
-              botStackFocused.current = nextTarget instanceof Node && event.currentTarget.contains(nextTarget)
-              syncBotStackExpanded()
-            }}
+            className={[
+              'onebot-webqq',
+              config.enableCapsuleFrostedGlass ? 'is-frosted' : 'is-plain',
+              `is-color-${resolvedColorMode}`,
+              botStackVisualExpanded ? 'is-bot-stack-expanded' : '',
+              config.useCompactCapsuleShadow ? '' : 'is-capsule-shadow-wide',
+            ].filter(Boolean).join(' ')}
+            style={capsuleStyle}
+            aria-live="polite"
           >
-            {hasMultipleBots ? (
-              <div
-                className={[
-                  'onebot-webqq__bot-stack',
-                  botStackVisualExpanded ? 'is-expanded' : '',
-                  botStackOverflowMotion === 'expanding' ? 'is-overflow-expanding' : '',
-                  botStackOverflowMotion === 'collapsing' ? 'is-overflow-collapsing' : '',
-                ].filter(Boolean).join(' ')}
-                style={botStackStyle}
-              >
-                {botStackBots.map((bot, index) => {
-                  const active = bot.selfId === activeBotSelfId
-                  const hidden = isBotCollapsedHidden(index)
-                  return (
-                    <button
-                      key={bot.selfId}
-                      className={[
-                        'onebot-webqq__bot-switch',
-                        active ? 'is-active' : '',
-                        index > 0 ? 'is-overlapped' : '',
-                        isBotCollapsedExtra(index) ? 'is-collapsed-extra' : '',
-                      ].filter(Boolean).join(' ')}
-                      type="button"
-                      aria-label={active ? t('capsule.openBot', { name: getBotName(bot) }) : t('capsule.switchBot', { name: getBotName(bot) })}
-                      aria-pressed={active}
-                      aria-hidden={hidden ? 'true' : undefined}
-                      tabIndex={hidden ? -1 : undefined}
-                      style={getBotSwitchStyle(index)}
-                      onClick={(event) => {
-                        event.stopPropagation()
-                        void selectBot(bot.selfId)
-                      }}
-                    >
-                      <span className="onebot-webqq__avatar">
-                        {renderAvatarImage(bot)}
-                        {active ? <span className={['onebot-webqq__status', getBotStatusClass(bot)].join(' ')}></span> : null}
-                        {showUnread && active ? <span className="onebot-webqq__avatar-unread">{capsuleUnreadText}</span> : null}
-                        {active ? <AvatarGuide visible={avatarGuideVisible && !webQQOpen} motion={avatarGuideMotion} /> : null}
+            {capsuleDock && showUnread ? <span className="onebot-webqq__dock-unread" aria-hidden="true"></span> : null}
+            <div
+              className={['onebot-webqq__avatar-capsule', hasMultipleBots ? 'has-bot-stack' : '', botStackVisualExpanded ? 'is-expanded' : ''].filter(Boolean).join(' ')}
+              style={avatarCapsuleStyle}
+              onPointerEnter={() => {
+                botStackHovered.current = true
+                syncBotStackExpanded()
+              }}
+              onPointerLeave={() => {
+                botStackHovered.current = false
+                syncBotStackExpanded()
+              }}
+              onFocus={() => {
+                botStackFocused.current = true
+                syncBotStackExpanded()
+              }}
+              onBlur={(event) => {
+                // 焦点仍落在胶囊内部（Tab 切换头像）时不算离开。
+                const nextTarget = event.relatedTarget
+                botStackFocused.current = nextTarget instanceof Node && event.currentTarget.contains(nextTarget)
+                syncBotStackExpanded()
+              }}
+            >
+              {hasMultipleBots ? (
+                <div
+                  className={[
+                    'onebot-webqq__bot-stack',
+                    botStackVisualExpanded ? 'is-expanded' : '',
+                    botStackOverflowMotion === 'expanding' ? 'is-overflow-expanding' : '',
+                    botStackOverflowMotion === 'collapsing' ? 'is-overflow-collapsing' : '',
+                  ].filter(Boolean).join(' ')}
+                  style={botStackStyle}
+                >
+                  {botStackBots.map((bot, index) => {
+                    const active = bot.selfId === activeBotSelfId
+                    const hidden = isBotCollapsedHidden(index)
+                    return (
+                      <button
+                        key={bot.selfId}
+                        className={[
+                          'onebot-webqq__bot-switch',
+                          active ? 'is-active' : '',
+                          index > 0 ? 'is-overlapped' : '',
+                          isBotCollapsedExtra(index) ? 'is-collapsed-extra' : '',
+                        ].filter(Boolean).join(' ')}
+                        type="button"
+                        aria-label={active ? t('capsule.openBot', { name: getBotName(bot) }) : t('capsule.switchBot', { name: getBotName(bot) })}
+                        aria-pressed={active}
+                        aria-hidden={hidden ? 'true' : undefined}
+                        tabIndex={hidden ? -1 : undefined}
+                        style={getBotSwitchStyle(index)}
+                        onClick={(event) => {
+                          event.stopPropagation()
+                          void selectBot(bot.selfId)
+                        }}
+                      >
+                        <span className="onebot-webqq__avatar">
+                          {renderAvatarImage(bot)}
+                          {active ? <span className={['onebot-webqq__status', getBotStatusClass(bot)].join(' ')}></span> : null}
+                          {showUnread && active ? <span className="onebot-webqq__avatar-unread">{capsuleUnreadText}</span> : null}
+                          {active ? <AvatarGuide visible={avatarGuideVisible && !webQQOpen} motion={avatarGuideMotion} /> : null}
+                        </span>
+                      </button>
+                    )
+                  })}
+                  {collapsedBotOverflowCount ? (
+                    <span className="onebot-webqq__bot-overflow" style={botOverflowStyle} aria-hidden="true">
+                      {botOverflowPreview ? (
+                        <span className="onebot-webqq__bot-overflow-avatar">{renderAvatarImage(botOverflowPreview)}</span>
+                      ) : null}
+                      <span className="onebot-webqq__bot-overflow-label">
+                        <span className="onebot-webqq__bot-overflow-plus">+</span>
+                        <span className="onebot-webqq__bot-overflow-count">{collapsedBotOverflowCount}</span>
                       </span>
-                    </button>
-                  )
-                })}
-                {collapsedBotOverflowCount ? (
-                  <span className="onebot-webqq__bot-overflow" style={botOverflowStyle} aria-hidden="true">
-                    {botOverflowPreview ? (
-                      <span className="onebot-webqq__bot-overflow-avatar">{renderAvatarImage(botOverflowPreview)}</span>
-                    ) : null}
-                    <span className="onebot-webqq__bot-overflow-label">
-                      <span className="onebot-webqq__bot-overflow-plus">+</span>
-                      <span className="onebot-webqq__bot-overflow-count">{collapsedBotOverflowCount}</span>
                     </span>
+                  ) : null}
+                </div>
+              ) : (
+                <button
+                  className="onebot-webqq__avatar-button"
+                  type="button"
+                  aria-label={capsuleButtonLabel}
+                  aria-expanded={webQQOpen}
+                  onClick={toggleWebQQ}
+                >
+                  <span className="onebot-webqq__avatar">
+                    {displayBotAvatar ? <img src={displayBotAvatar} alt={displayBotName} /> : <BotAvatarIcon />}
+                    <span className={['onebot-webqq__status', statusClass].join(' ')}></span>
+                    {showUnread ? <span className="onebot-webqq__avatar-unread">{capsuleUnreadText}</span> : null}
+                    <AvatarGuide visible={avatarGuideVisible && !webQQOpen} motion={avatarGuideMotion} />
                   </span>
-                ) : null}
-              </div>
-            ) : (
-              <button
-                className="onebot-webqq__avatar-button"
-                type="button"
-                aria-label={capsuleButtonLabel}
-                aria-expanded={webQQOpen}
-                onClick={toggleWebQQ}
-              >
-                <span className="onebot-webqq__avatar">
-                  {displayBotAvatar ? <img src={displayBotAvatar} alt={displayBotName} /> : <BotAvatarIcon />}
-                  <span className={['onebot-webqq__status', statusClass].join(' ')}></span>
-                  {showUnread ? <span className="onebot-webqq__avatar-unread">{capsuleUnreadText}</span> : null}
-                  <AvatarGuide visible={avatarGuideVisible && !webQQOpen} motion={avatarGuideMotion} />
-                </span>
-              </button>
-            )}
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>
