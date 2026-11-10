@@ -495,3 +495,65 @@
   opacity: 0;
   transform: translateY(2px) scale(0.98);
 }
+
+/* 贴边隐藏：只位移胶囊本体与摘要文字。host 不能带 transform / translate，
+   否则会成为 fixed 摘要与观察窗的包含块；translate 与头像栈 FLIP 的 transform 互不覆盖。 */
+.onebot-webqq-host :is(.onebot-webqq-layout-root, .onebot-webqq__body) {
+  /* 头像栈展开越出左缘时的补偿位移（JS 写入「x y」），节奏与胶囊宽度过渡一致。 */
+  translate: var(--onebot-webqq-capsule-shift, none);
+  transition: translate 0.18s ease;
+}
+
+/* 收起后 host 原位置不再拦截指针，只有留在视口内的把手响应悬停。 */
+.onebot-webqq-host.is-dock-hidden {
+  pointer-events: none;
+}
+
+.onebot-webqq-host.is-dock-hidden :is(.onebot-webqq-layout-root, .onebot-webqq__body) {
+  translate: var(--onebot-webqq-dock-offset, 0) 0;
+  pointer-events: auto;
+}
+
+/* 贴边胶囊的滑出与收起同速。 */
+.onebot-webqq-host:is(.is-docked-left, .is-docked-right) :is(.onebot-webqq-layout-root, .onebot-webqq__body) {
+  transition-duration: 0.32s;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.onebot-webqq__dock-unread {
+  position: absolute;
+  top: 50%;
+  z-index: 3;
+  width: 8px;
+  height: 8px;
+  margin-top: -4px;
+  border-radius: 999px;
+  background: #ef4444;
+  box-shadow: 0 0 0 2px #ffffff;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
+.onebot-webqq.is-color-dark .onebot-webqq__dock-unread {
+  box-shadow: 0 0 0 2px #2c2c30;
+}
+
+.onebot-webqq-host.is-docked-right .onebot-webqq__dock-unread {
+  left: 6px;
+}
+
+.onebot-webqq-host.is-docked-left .onebot-webqq__dock-unread {
+  right: 6px;
+}
+
+.onebot-webqq-host.is-dock-hidden .onebot-webqq__dock-unread {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .onebot-webqq-host :is(.onebot-webqq-layout-root, .onebot-webqq__body),
+  .onebot-webqq__dock-unread {
+    transition: none;
+  }
+}

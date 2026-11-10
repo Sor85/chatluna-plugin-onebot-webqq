@@ -21,7 +21,15 @@ import {
 import { getWebQQAccentStyle } from '../webqq/utils/webqq-theme-view'
 import { resolveWebQQColorMode } from '../webqq/utils/webqq-color-mode'
 import { AVATAR_GUIDE_PULSE_COUNT, createAvatarGuideMotion, type AvatarGuideMotion } from './avatar-guide'
-import { clampCapsuleAnchor, normalizeCapsuleAnchorPosition, type CapsuleAnchor } from './capsule-anchor'
+import {
+  CAPSULE_ANCHOR_VIEWPORT_MARGIN,
+  CAPSULE_DOCK_PEEK,
+  clampCapsuleAnchor,
+  normalizeCapsuleAnchorPosition,
+  resolveCapsuleDock,
+  type CapsuleAnchor,
+  type CapsuleDockSide,
+} from './capsule-anchor'
 
 const BOT_STACK_ANIMATION_DURATION = 260
 const BOT_AVATAR_OVERLAP_COLLAPSED_CENTER = 45
@@ -29,6 +37,10 @@ const BOT_AVATAR_OVERLAP_EXPANDED_CENTER = 52
 // 位移阈值：整枚小胶囊都是拖动把手，头像同时还要能点开观察窗、切换机器人，
 // 因此指针必须先明确移动够远才算拖动，阈值以内松手仍然走原来的点击路径。
 const CAPSULE_DRAG_THRESHOLD = 4
+// 指针离开贴边胶囊后的收回延迟，避免划过边缘时来回抖动。
+const CAPSULE_DOCK_HIDE_DELAY = 400
+// 单机器人胶囊的宽度，与样式表 --onebot-webqq-shell-collapsed-width 的默认值一致。
+const CAPSULE_SINGLE_WIDTH = 204
 const THINKING_ACTIVITY = '正在思考'
 
 export const BOT_PROFILE_STORAGE_KEY = 'chatluna.onebot-webqq.bot-profile'
@@ -48,6 +60,7 @@ interface CapsuleDragSession {
   readonly startY: number
   readonly startAnchor: CapsuleAnchor
   dragging: boolean
+  dock?: CapsuleDockSide
 }
 
 function readCachedBotProfile() {
@@ -166,6 +179,9 @@ export function Capsule(props: { children?: React.ReactNode }) {
   const [tooltipLeft, setTooltipLeft] = React.useState(0)
   const [capsuleDragging, setCapsuleDragging] = React.useState(false)
   const capsuleDragSession = React.useRef<CapsuleDragSession>(undefined)
+  const [dockHovered, setDockHovered] = React.useState(false)
+  const [dockFocused, setDockFocused] = React.useState(false)
+  const dockHideTimer = React.useRef<ReturnType<typeof setTimeout>>(undefined)
   const botStackLayout = React.useRef<AutoLayout>(undefined)
   /** 记录了布局快照、等提交后播放的 FLIP；在 useLayoutEffect 里取出执行。 */
   const pendingLayoutAnimation = React.useRef<() => Promise<void>>(undefined)
@@ -217,6 +233,23 @@ export function Capsule(props: { children?: React.ReactNode }) {
       ? activityTooltipText
       : ''
   const statusClass = getBotStatusClass(displayBotProfile)
+  const capsuleDock = capsuleAnchor?.dock
+  // 观察窗、拖动、首次引导与键盘焦点都需要完整胶囊，期间不收回。
+  const dockHidden = !!capsuleDock && !capsuleDragging && !webQQOpen && !dockHovered && !dockFocused && !avatarGuideVisible
+  // 收起时按折叠宽度位移：悬停展开的头像栈在收回过程中同时折叠，按展开宽度算会把把手也推出视口。
+  const collapsedShellWidth = hasMultipleBots ? 162 + collapsedBotStackWidth : CAPSULE_SINGLE_WIDTH
+  const shellWidth = botStackVisualExpanded && hasMultipleBots ? 162 + expandedBotStackWidth : collapsedShellWidth
+  // 胶囊以右侧为锚点，右缘在 viewport - right，宽度变化只改左缘。锚点 right 按拖动或恢复时量到的宽度夹取，
+  // 机器人列表晚到、头像栈展开都会让它过期，因此位移一律按右缘直接推算。
+  const viewportWidth = window.innerWidth
+  const shellRight = capsuleAnchor ? viewportWidth - capsuleAnchor.right : 0
+  const shellLeftGap = shellRight - shellWidth - CAPSULE_ANCHOR_VIEWPORT_MARGIN
+  // 贴左时左缘始终对齐边距；其余位置只在展开越出左缘时右移补回。
+  const capsuleShift = !capsuleAnchor ? 0 : capsuleDock === 'left' ? -shellLeftGap : Math.max(0, -shellLeftGap)
+  // 收起时只露出把手：贴左把右缘推到把手处，贴右按折叠宽度把左缘推到视口内把手处。
+  const dockOffset = capsuleDock === 'left'
+    ? CAPSULE_DOCK_PEEK - shellRight
+    : (viewportWidth - CAPSULE_DOCK_PEEK) - (shellRight - collapsedShellWidth)
 
   const capsuleHostStyle = {
     ...getWebQQAccentStyle(config.webQQAccentColor),
@@ -226,6 +259,8 @@ export function Capsule(props: { children?: React.ReactNode }) {
       '--onebot-webqq-capsule-right': `${capsuleAnchor.right}px`,
       '--onebot-webqq-capsule-bottom': `${capsuleAnchor.bottom}px`,
     } : {}),
+    ...(capsuleDock ? { '--onebot-webqq-dock-offset': `${dockOffset}px` } : {}),
+    ...(capsuleShift ? { '--onebot-webqq-capsule-shift': `${capsuleShift}px 0` } : {}),
   } as React.CSSProperties
   const capsuleStyle = (hasMultipleBots ? {
     '--onebot-webqq-shell-collapsed-width': `${162 + collapsedBotStackWidth}px`,
@@ -412,11 +447,16 @@ export function Capsule(props: { children?: React.ReactNode }) {
     }
     event.preventDefault()
     // right/bottom 量的是到视口右缘、下缘的距离，指针往右下走时它们变小。
+    // 拖动中按普通位置夹取，贴边只在松手时生效，否则胶囊一碰到边就被钉住。
+    const viewport = getCapsuleViewport()
+    const right = session.startAnchor.right - deltaX
+    session.dock = resolveCapsuleDock({ right, width: session.startAnchor.width }, viewport, session.startAnchor.dock)
     capsuleAnchorStore.set(clampCapsuleAnchor({
       ...session.startAnchor,
-      right: session.startAnchor.right - deltaX,
+      dock: undefined,
+      right,
       bottom: session.startAnchor.bottom - deltaY,
-    }, getCapsuleViewport()))
+    }, viewport))
   })
 
   const stopCapsuleDrag = React.useRef(() => {
@@ -429,9 +469,19 @@ export function Capsule(props: { children?: React.ReactNode }) {
     setCapsuleDragging(false)
     if (!session.dragging) return
     capsuleHost.current?.addEventListener('click', blockCapsuleClick.current, true)
-    const anchor = capsuleAnchorStore.get()
-    // 只存位置：宽高每次重新量，存下来会在机器人数量变化后按过期尺寸算夹取边界。
-    if (anchor) writeStored(CAPSULE_ANCHOR_STORAGE_KEY, { right: anchor.right, bottom: anchor.bottom })
+    const dragged = capsuleAnchorStore.get()
+    if (!dragged) return
+    const anchor = clampCapsuleAnchor({ ...dragged, dock: session.dock }, getCapsuleViewport())
+    capsuleAnchorStore.set(anchor)
+    // 松手即收起：指针此时仍压在胶囊上，等它离开会让贴边看起来没有生效。
+    if (anchor.dock) {
+      clearTimeout(dockHideTimer.current)
+      setDockHovered(false)
+    }
+    // 只存位置与贴边：宽高每次重新量，存下来会在机器人数量变化后按过期尺寸算夹取边界。
+    writeStored(CAPSULE_ANCHOR_STORAGE_KEY, anchor.dock
+      ? { right: anchor.right, bottom: anchor.bottom, dock: anchor.dock }
+      : { right: anchor.right, bottom: anchor.bottom })
   })
 
   const startCapsuleDrag = (event: React.PointerEvent) => {
@@ -451,6 +501,12 @@ export function Capsule(props: { children?: React.ReactNode }) {
     window.addEventListener('pointermove', handleCapsuleDragMove.current)
     window.addEventListener('pointerup', stopCapsuleDrag.current)
     window.addEventListener('pointercancel', stopCapsuleDrag.current)
+  }
+
+  // 摘要文字区没有按钮，按下时取消默认行为只会阻止文本选择；否则拖过页面会选中沿途文字。
+  const startCapsuleBodyDrag = (event: React.PointerEvent) => {
+    if (event.button === 0) event.preventDefault()
+    startCapsuleDrag(event)
   }
 
   // 机器人头像是 <img>，浏览器给图片的默认行为是原生拖放；dragstart 会先于我们的位移成立并派发
@@ -564,6 +620,7 @@ export function Capsule(props: { children?: React.ReactNode }) {
       clearTimeout(botStackOverflowMotionTimer.current)
       clearTimeout(suppressStackCollapseTimer.current)
       clearTimeout(avatarGuideTimer.current)
+      clearTimeout(dockHideTimer.current)
       avatarGuideMotion.destroy()
     }
   }, [])
@@ -614,7 +671,30 @@ export function Capsule(props: { children?: React.ReactNode }) {
     : <BotAvatarIcon />
 
   return (
-    <div ref={capsuleHost} className={['onebot-webqq-host', capsuleDragging ? 'is-dragging' : ''].filter(Boolean).join(' ')} style={capsuleHostStyle}>
+    <div
+      ref={capsuleHost}
+      className={[
+        'onebot-webqq-host',
+        capsuleDragging ? 'is-dragging' : '',
+        capsuleDock ? `is-docked-${capsuleDock}` : '',
+        dockHidden ? 'is-dock-hidden' : '',
+      ].filter(Boolean).join(' ')}
+      style={capsuleHostStyle}
+      onPointerEnter={() => {
+        clearTimeout(dockHideTimer.current)
+        setDockHovered(true)
+      }}
+      onPointerLeave={() => {
+        clearTimeout(dockHideTimer.current)
+        dockHideTimer.current = setTimeout(() => setDockHovered(false), CAPSULE_DOCK_HIDE_DELAY)
+      }}
+      // 只认键盘焦点：鼠标点击头像也会聚焦按钮，按这种焦点保持展开会让胶囊点过后收不回去。
+      onFocus={(event) => setDockFocused(event.target.matches(':focus-visible'))}
+      onBlur={(event) => {
+        const nextTarget = event.relatedTarget
+        if (!(nextTarget instanceof Node && event.currentTarget.contains(nextTarget))) setDockFocused(false)
+      }}
+    >
       <div ref={capsuleLayoutRef} className="onebot-webqq-layout-root" onPointerDown={startCapsuleDrag} onDragStart={blockCapsuleNativeDrag}>
         <div
           className={[
@@ -627,6 +707,7 @@ export function Capsule(props: { children?: React.ReactNode }) {
           style={capsuleStyle}
           aria-live="polite"
         >
+          {capsuleDock && showUnread ? <span className="onebot-webqq__dock-unread" aria-hidden="true"></span> : null}
           <div
             className={['onebot-webqq__avatar-capsule', hasMultipleBots ? 'has-bot-stack' : '', botStackVisualExpanded ? 'is-expanded' : ''].filter(Boolean).join(' ')}
             style={avatarCapsuleStyle}
@@ -724,7 +805,7 @@ export function Capsule(props: { children?: React.ReactNode }) {
       </div>
       <div
         className={['onebot-webqq__body', `is-color-${resolvedColorMode}`].join(' ')}
-        onPointerDown={startCapsuleDrag}
+        onPointerDown={startCapsuleBodyDrag}
         onDragStart={blockCapsuleNativeDrag}
         onClick={() => showAvatarGuide()}
       >

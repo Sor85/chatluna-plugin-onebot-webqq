@@ -12,3 +12,4 @@
 - 浏览器偏好统一通过 `@chatluna/ui-storage`；消息缓存保留 IndexedDB。界面文案写 `locales/zh.yml` / `en.yml` 并保持键及插值参数相同；协议消息原文不翻译。
 - v2 `useTranslate` 的引用不会随语言改变，记忆化渲染使用 `i18n.ts` 的 `useT`；树外控制器通过 `tr` 取得当前翻译。
 - 原生文件选择和 contenteditable 消息编辑器保留其输入语义。其他基础控件优先使用 ui-kit。不增加 cursor 样式，不关闭宿主组件自带的交互反馈。
+- 胶囊贴边与展开补偿只对 `.onebot-webqq-layout-root` 和 `.onebot-webqq__body` 使用 `translate`，不能加在 `.onebot-webqq-host` 上：host 带位移会成为 fixed 摘要与观察窗的包含块。胶囊以右缘为锚点，锚点 `right` 按测量时的宽度夹取，会因机器人列表晚到或头像栈展开而过期，位移按右缘推算（见 `capsule.tsx` 的 `dockOffset` / `capsuleShift`）。贴边判定规则在 `capsule-anchor.ts`，由 `tests/capsule-dock.test.ts` 覆盖。

@@ -17,10 +17,14 @@ export interface CapsuleAnchor {
   readonly bottom: number
   readonly width: number
   readonly height: number
+  /** 贴边隐藏的一侧。贴边时水平位置由这一侧决定，right 只是夹取结果。 */
+  readonly dock?: CapsuleDockSide
 }
 
-/** 会被记住的那一半：只有位置跨会话保留。 */
-export type CapsuleAnchorPosition = Pick<CapsuleAnchor, 'right' | 'bottom'>
+export type CapsuleDockSide = 'left' | 'right'
+
+/** 会被记住的那一半：只有位置与贴边状态跨会话保留。 */
+export type CapsuleAnchorPosition = Pick<CapsuleAnchor, 'right' | 'bottom' | 'dock'>
 
 export interface CapsuleAnchorViewport {
   readonly width: number
@@ -30,14 +34,35 @@ export interface CapsuleAnchorViewport {
 /** 入口与视口边缘之间保留的最小间距。 */
 export const CAPSULE_ANCHOR_VIEWPORT_MARGIN = 8
 
+/** 贴边隐藏后留在视口内的宽度，作为重新唤出的把手。 */
+export const CAPSULE_DOCK_PEEK = 18
+
 /** 读取存下来的入口位置。缺字段、非数字、NaN 与 Infinity 一律当作没存过，交给默认锚点。 */
 export function normalizeCapsuleAnchorPosition(value: unknown): CapsuleAnchorPosition | undefined {
   if (!value || typeof value !== 'object') return
   const right = Reflect.get(value, 'right')
   const bottom = Reflect.get(value, 'bottom')
+  const dock = Reflect.get(value, 'dock')
   if (typeof right !== 'number' || typeof bottom !== 'number') return
   if (!Number.isFinite(right) || !Number.isFinite(bottom)) return
-  return { right, bottom }
+  return dock === 'left' || dock === 'right' ? { right, bottom, dock } : { right, bottom }
+}
+
+/**
+ * 判定一次拖动是否贴边。anchor 是未夹取的期望位置。
+ *
+ * 只靠到达边距还不够：拖到边上停住的位置与普通摆放无法区分。指针必须把胶囊继续往视口外推满一个边距，
+ * 才算贴边。已经贴着某一侧时，沿边上下拖动仍停在边距内，保留原来的贴边。
+ */
+export function resolveCapsuleDock(
+  anchor: Pick<CapsuleAnchor, 'right' | 'width'>,
+  viewport: CapsuleAnchorViewport,
+  previous?: CapsuleDockSide,
+): CapsuleDockSide | undefined {
+  const margin = CAPSULE_ANCHOR_VIEWPORT_MARGIN
+  const left = viewport.width - anchor.right - anchor.width
+  if (anchor.right <= (previous === 'right' ? margin : 0)) return 'right'
+  if (left <= (previous === 'left' ? margin : 0)) return 'left'
 }
 
 /**
@@ -51,9 +76,11 @@ export function clampCapsuleAnchor(anchor: CapsuleAnchor, viewport: CapsuleAncho
   const margin = CAPSULE_ANCHOR_VIEWPORT_MARGIN
   const maxRight = viewport.width - anchor.width - margin
   const maxBottom = viewport.height - anchor.height - margin
+  // 贴边时视口变宽也要跟着那一侧走，否则贴左的胶囊会离开左缘悬在半空。
+  const right = anchor.dock === 'right' ? margin : anchor.dock === 'left' ? maxRight : anchor.right
   return {
     ...anchor,
-    right: Math.round(Math.max(margin, Math.min(anchor.right, maxRight))),
+    right: Math.round(Math.max(margin, Math.min(right, maxRight))),
     bottom: Math.round(Math.max(margin, Math.min(anchor.bottom, maxBottom))),
   }
 }
