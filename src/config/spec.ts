@@ -39,7 +39,6 @@ const configSpec = {
 
   // 小胶囊设置
   enableCapsuleFrostedGlass: { default: true, mirrored: true },
-  useCompactCapsuleShadow: { default: true, mirrored: true },
   showWebQQCapsuleUnread: { default: true, mirrored: true },
   // 登录页与角色初始化向导是全屏流程，胶囊不应盖在表单上。
   hiddenCapsuleActivityIds: { default: ['/logs', '/login', '/login/forgot', '/setup'], mirrored: true },

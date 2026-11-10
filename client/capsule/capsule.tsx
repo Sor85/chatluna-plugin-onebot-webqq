@@ -731,7 +731,6 @@ export function Capsule(props: { children?: React.ReactNode }) {
               config.enableCapsuleFrostedGlass ? 'is-frosted' : 'is-plain',
               `is-color-${resolvedColorMode}`,
               botStackVisualExpanded ? 'is-bot-stack-expanded' : '',
-              config.useCompactCapsuleShadow ? '' : 'is-capsule-shadow-wide',
             ].filter(Boolean).join(' ')}
             style={capsuleStyle}
             aria-live="polite"

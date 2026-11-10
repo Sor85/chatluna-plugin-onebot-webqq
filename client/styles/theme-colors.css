@@ -355,10 +355,6 @@
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.24);
 }
 
-.onebot-webqq.is-color-dark.is-capsule-shadow-wide::before {
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.28);
-}
-
 .onebot-webqq__body.is-color-dark {
   color: #edf2f7;
 }

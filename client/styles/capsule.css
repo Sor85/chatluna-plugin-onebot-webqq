@@ -54,10 +54,6 @@
   border-color: rgba(217, 225, 234, 0.86);
 }
 
-.onebot-webqq.is-capsule-shadow-wide::before {
-  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.16);
-}
-
 .onebot-webqq.is-bot-stack-expanded {
   width: var(--onebot-webqq-shell-width, var(--onebot-webqq-shell-collapsed-width, 204px));
 }
