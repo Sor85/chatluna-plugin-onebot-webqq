@@ -1,0 +1,197 @@
+capsule.bot: 机器人
+capsule.idle: 空闲
+capsule.idleActivity: 空闲中
+capsule.open: 打开 WebQQ 观察窗
+capsule.openBot: 打开 {name} 的 WebQQ 观察窗
+capsule.openWithUnread: 打开 WebQQ 观察窗，{count} 条未读消息
+capsule.switchBot: 切换到 {name} 的 WebQQ
+capsule.talking: 正在与 {name} 对话
+capsule.talkingPrefix: 正在与
+capsule.talkingSuffix: 对话
+capsule.thinking: 正在思考
+webqq.chat.botThinking: 机器人正在思考
+webqq.chat.empty: 暂无消息
+webqq.chat.emptySubtitle: 好友 / 群聊
+webqq.chat.face: 表情
+webqq.chat.forwardCount: 查看{count}条转发消息
+webqq.chat.image: 图片
+webqq.chat.jumpToQuote: 跳转到引用消息
+webqq.chat.loadMore: 查看更多消息
+webqq.chat.loadingMore: 加载中...
+webqq.chat.recalled: 已撤回
+webqq.chat.scrollBottom: 返回底部
+webqq.chat.selectConversation: 选择一个会话
+webqq.chat.viewForward: 查看合并转发消息
+webqq.chat.viewImage: 查看大图
+webqq.chat.viewProfileOf: 查看 {name} 的资料
+webqq.common.cancel: 取消
+webqq.common.close: 关闭
+webqq.common.confirm: 确认
+webqq.common.loading: 加载中
+webqq.common.processing: 处理中...
+webqq.common.save: 保存
+webqq.composer.chooseFile: 选择文件
+webqq.composer.clearReply: 清除回复
+webqq.composer.mentionMenu: 提及成员
+webqq.composer.noMentionMatch: 无匹配成员
+webqq.composer.placeholder: 发送消息
+webqq.composer.previewFile: 预览 {name}
+webqq.composer.removeFile: 移除 {name}
+webqq.composer.replyTo: 回复 {name}：{summary}
+webqq.composer.send: 发送
+webqq.composer.video: 视频 {name}
+webqq.contacts.emptyFriends: 暂无好友
+webqq.contacts.emptyGroups: 暂无群组
+webqq.contacts.emptyRecent: 暂无最近会话
+webqq.contacts.friendsCategory: 好友
+webqq.contacts.searchFriends: 搜索好友...
+webqq.contacts.searchGroups: 搜索群组...
+webqq.dialog.deleteFriend.confirm: 删除好友
+webqq.dialog.deleteFriend.description: 确定删除好友「{name}」？
+webqq.dialog.deleteFriend.title: 删除好友
+webqq.dialog.groupCard.description: 留空可以清除当前群名片。
+webqq.dialog.groupCard.placeholder: 输入群名片
+webqq.dialog.groupCard.title: 修改群名片
+webqq.dialog.groupTitle.description: 专属头衔只能由群主授予，留空可以清除当前头衔。
+webqq.dialog.groupTitle.placeholder: 输入专属头衔
+webqq.dialog.groupTitle.title: 设置专属头衔
+webqq.dialog.kick.confirm: 踢出群组
+webqq.dialog.kick.description: 确定将「{name}」移出本群？
+webqq.dialog.kick.title: 踢出群组
+webqq.dialog.leaveGroup.confirm: 退出群组
+webqq.dialog.leaveGroup.description: 确定退出群「{name}」？
+webqq.dialog.leaveGroup.title: 退出群组
+webqq.dialog.remark.description: 备注只对当前 Bot 视角生效，不会修改对方资料昵称。
+webqq.dialog.remark.placeholder: 留空可删除备注
+webqq.dialog.remark.title: 设置好友备注
+webqq.emoji.all: 全部表情
+webqq.emoji.common: 推荐
+webqq.emoji.noMatch: 没有匹配的表情
+webqq.emoji.recent: 常用
+webqq.emoji.results: 搜索结果
+webqq.emoji.search: 搜索表情
+webqq.emoji.searchPlaceholder: 搜索表情名称、拼音或 ID
+webqq.error.action: 操作失败
+webqq.error.handleNotice: 处理通知失败
+webqq.error.loadContacts: 加载联系人失败
+webqq.error.loadGroupInfo: 加载群信息失败
+webqq.error.loadHistory: 加载聊天历史失败
+webqq.error.loadHistoryCache: 加载聊天历史缓存失败
+webqq.error.loadNotices: 加载通知失败
+webqq.error.loadOlderHistory: 加载更早聊天历史失败
+webqq.error.loadProfile: 加载资料失败
+webqq.error.notGroup: 当前不是群聊
+webqq.error.pokeFriend: 好友戳一戳失败
+webqq.error.pokeMember: 群成员戳一戳失败
+webqq.error.react: 贴表情失败
+webqq.error.recall: 撤回消息失败
+webqq.error.search: 查找聊天记录失败
+webqq.error.searchTimeout: 查找聊天记录超时
+webqq.error.send: 发送消息失败
+webqq.error.sendDisabled: 发送功能未开启
+webqq.error.setAdmin: 设为管理员失败
+webqq.error.unreact: 取消表情失败
+webqq.error.unsetAdmin: 取消管理员失败
+webqq.error.updateProfile: 更新资料失败
+webqq.forward.close: 关闭合并转发消息
+webqq.forward.title: 合并转发消息
+webqq.forwardTarget.description: 将已选消息合并转发到一个最近会话、好友或群组。
+webqq.forwardTarget.failed: 合并转发失败
+webqq.forwardTarget.list: 目标会话
+webqq.forwardTarget.noFriends: 暂无已添加好友会话
+webqq.forwardTarget.noGroups: 暂无已加入群组
+webqq.forwardTarget.noMatch: 没有匹配的目标会话
+webqq.forwardTarget.search: 搜索目标会话
+webqq.forwardTarget.searchPlaceholder: 搜索最近、好友或群组...
+webqq.forwardTarget.sending: 转发中...
+webqq.forwardTarget.submit: 合并转发
+webqq.forwardTarget.tabs: 目标分类
+webqq.forwardTarget.title: 选择转发目标
+webqq.group.announcements: 群公告
+webqq.group.close: 关闭群信息
+webqq.group.emptyAnnouncements: 暂无群公告
+webqq.group.emptyMembers: 暂无群成员
+webqq.group.members: 群成员
+webqq.group.open: 更多群信息
+webqq.group.searchMembers: 搜索群昵称或 QQ 号
+webqq.group.title: 群信息
+webqq.groupSubtitle: 群聊 {groupId} · {count} 人
+webqq.member.kick: 踢出群组
+webqq.member.kickAdminLimit: 管理员不能管理群主或管理员
+webqq.member.kickNeedsAdmin: 需要管理员权限才能踢人
+webqq.member.manage: 群成员操作
+webqq.member.mention: '@ 用户'
+webqq.member.poke: 戳一戳
+webqq.member.setAdmin: 设为管理员
+webqq.member.setCard: 修改群名片
+webqq.member.setTitle: 设置专属头衔
+webqq.member.unsetAdmin: 取消管理员
+webqq.menu.deleteFriend: 删除好友
+webqq.menu.deleteRecent: 删除会话
+webqq.menu.leaveGroup: 退出群组
+webqq.menu.setRemark: 设置好友备注
+webqq.menu.viewProfile: 查看资料
+webqq.message.react: 贴表情
+webqq.message.recall: 撤回
+webqq.message.reply: 回复
+webqq.message.select: 多选
+webqq.notice.approve: 同意
+webqq.notice.approved: 已同意
+webqq.notice.empty: 暂无通知
+webqq.notice.friendRequests: 好友申请
+webqq.notice.groupNotices: 群通知
+webqq.notice.reject: 拒绝
+webqq.notice.rejected: 已拒绝
+webqq.notice.title: 通知
+webqq.preview.close: 关闭图片预览
+webqq.preview.title: 图片预览
+webqq.profile.avatarReadFailed: 头像文件读取失败
+webqq.profile.cancelEdit: 取消编辑{label}
+webqq.profile.changeAvatar: 点击更换头像
+webqq.profile.changingAvatar: 正在更换头像…
+webqq.profile.editField: 编辑{label}
+webqq.profile.editSex: 编辑性别
+webqq.profile.group.account: 账号资料
+webqq.profile.group.bot-runtime: 机器人运行
+webqq.profile.group.friendship: 好友资料
+webqq.profile.group.group-member: 群成员资料
+webqq.profile.group.group: 群资料
+webqq.profile.nicknamePlaceholder: 输入昵称
+webqq.profile.notePlaceholder: 输入个性签名
+webqq.profile.saveField: 保存{label}
+webqq.profile.sex.female: 女
+webqq.profile.sex.male: 男
+webqq.profile.sex.unknown: 未知
+webqq.profile.sexOptions: 性别选项
+webqq.profile.unset: 未设置
+webqq.record.failed: 转换失败
+webqq.record.play: 播放语音
+webqq.record.transcribe: 语音转文字
+webqq.record.unrecognized: （无法识别）
+webqq.search.chooseDate: 选择聊天记录日期
+webqq.search.chooseMonth: 选择月份
+webqq.search.chooseYear: 选择年份
+webqq.search.clear: 清空搜索
+webqq.search.close: 关闭查找聊天记录
+webqq.search.date: 按日期筛选聊天记录
+webqq.search.dateActive: 筛选日期，当前为 {date}
+webqq.search.input: 搜索消息正文
+webqq.search.month: '{month}月'
+webqq.search.more: 加载更多结果
+webqq.search.nextMonth: 下个月
+webqq.search.noMatch: 没有匹配的聊天记录
+webqq.search.placeholder: 查找聊天记录...
+webqq.search.prevMonth: 上个月
+webqq.search.results: 搜索结果
+webqq.search.searching: 搜索中...
+webqq.search.title: 查找聊天记录
+webqq.search.weekdays: 一,二,三,四,五,六,日
+webqq.search.year: '{year}年'
+webqq.selection.count: 已选 {count} 条
+webqq.selection.toolbar: 消息多选操作
+webqq.tabs.friends: 好友
+webqq.tabs.groups: 群组
+webqq.tabs.recent: 最近
+webqq.thinking.duration: 已思考 {seconds}s
+webqq.thinking.usageLabel: 本次 ChatLuna 调用指标
+webqq.window: WebQQ 观察窗

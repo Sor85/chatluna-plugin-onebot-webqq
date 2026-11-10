@@ -1,0 +1,10 @@
+node_modules
+lib
+dist
+*.tsbuildinfo
+.DS_Store
+.playwright-cli
+.playwright-mcp
+/data
+.env
+.env.*

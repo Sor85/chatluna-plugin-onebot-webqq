@@ -1,0 +1,108 @@
+{
+  "name": "chatluna-plugin-onebot-webqq",
+  "version": "0.0.1",
+  "description": "在 ChatLuna WebUI 中提供 OneBot WebQQ 与聊天状态胶囊，显示 ChatLuna 的思考状态、内心活动、token 用量与好感度",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sor85/chatluna-plugin-onebot-webqq.git"
+  },
+  "homepage": "https://github.com/Sor85/chatluna-plugin-onebot-webqq#readme",
+  "bugs": {
+    "url": "https://github.com/Sor85/chatluna-plugin-onebot-webqq/issues"
+  },
+  "keywords": [
+    "chatluna-plugin",
+    "onebot",
+    "webqq",
+    "napcat",
+    "llbot",
+    "snowluma"
+  ],
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "default": "./lib/index.js"
+    },
+    "./package.json": "./package.json",
+    "./client": {
+      "types": "./client/index.ts",
+      "default": "./client/index.ts"
+    }
+  },
+  "files": [
+    "lib",
+    "dist",
+    "client",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "scripts": {
+    "sync": "node scripts/sync-to-v2.mjs --once",
+    "sync:watch": "node scripts/sync-to-v2.mjs",
+    "build": "yakumo build",
+    "clean": "yakumo clean",
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.client.json --noEmit"
+  },
+  "dependencies": {
+    "qface": "^1.4.1",
+    "schemastery": "3.18.0"
+  },
+  "peerDependencies": {
+    "@chatluna/server": ">=2.0.0-alpha.0",
+    "@chatluna/transform": ">=2.0.0-alpha.0",
+    "@chatluna/ui-server": ">=2.0.0-alpha.0",
+    "@satorijs/core": "~4.6.1",
+    "cordis": "^4.0.0-rc.12"
+  },
+  "devDependencies": {
+    "@chatluna/server": "workspace:*",
+    "@chatluna/transform": "workspace:*",
+    "@chatluna/ui-client": "workspace:*",
+    "@chatluna/ui-kit": "workspace:*",
+    "@chatluna/ui-schema-form": "workspace:*",
+    "@chatluna/ui-server": "workspace:*",
+    "@chatluna/ui-storage": "workspace:*",
+    "@cordisjs/plugin-database": "4.2.0",
+    "@cordisjs/plugin-server": "^1.7.0",
+    "@cordisjs/unyaml": "^3.0.0",
+    "@satorijs/core": "~4.6.1",
+    "@tabler/icons-react": "^3.51.0",
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "animejs": "4.5.0",
+    "cordis": "4.0.0-rc.12",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "react-router": "^8.3.0",
+    "typescript": "7.0.2",
+    "vitest": "^3.2.4"
+  },
+  "cordis": {
+    "description": {
+      "en": "OneBot WebQQ and chat status capsule in the ChatLuna WebUI, showing ChatLuna thinking, character thoughts, token usage and affinity",
+      "zh": "在 ChatLuna WebUI 中提供 OneBot WebQQ 与聊天状态胶囊，显示 ChatLuna 的思考状态、内心活动、token 用量与好感度"
+    },
+    "service": {
+      "required": [
+        "satori",
+        "server",
+        "chatluna_server",
+        "chatluna_webui"
+      ],
+      "optional": [
+        "database",
+        "chat",
+        "character"
+      ]
+    }
+  }
+}

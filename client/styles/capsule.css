@@ -1,0 +1,497 @@
+@property --onebot-webqq-avatar-overlap-center {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 45px;
+}
+.onebot-webqq-host {
+  position: fixed;
+  right: var(--onebot-webqq-capsule-right, 24px);
+  bottom: var(--onebot-webqq-capsule-bottom, 56px);
+  z-index: 10000;
+  height: 50px;
+  line-height: 0;
+}
+
+.onebot-webqq-host.is-dragging {
+  user-select: none;
+}
+
+.onebot-webqq-layout-root {
+  position: relative;
+  display: block;
+  z-index: 10000;
+  height: 50px;
+}
+
+.onebot-webqq {
+  position: relative;
+  z-index: 10000;
+  width: var(--onebot-webqq-shell-collapsed-width, 204px);
+  height: 50px;
+  box-sizing: border-box;
+  color: var(--k-text-dark, var(--fg1, #1f2328));
+  border-radius: 999px;
+  isolation: isolate;
+  pointer-events: none;
+  transition: width 0.18s ease;
+}
+
+.onebot-webqq::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  box-sizing: border-box;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.62);
+  border-radius: inherit;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.16);
+  pointer-events: none;
+}
+
+.onebot-webqq.is-plain::before {
+  background: #ffffff;
+  border-color: rgba(217, 225, 234, 0.86);
+}
+
+.onebot-webqq.is-capsule-shadow-wide::before {
+  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.16);
+}
+
+.onebot-webqq.is-bot-stack-expanded {
+  width: var(--onebot-webqq-shell-width, var(--onebot-webqq-shell-collapsed-width, 204px));
+}
+
+.onebot-webqq__avatar-capsule {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  width: var(--onebot-webqq-avatar-capsule-collapsed-width, 50px);
+  height: 50px;
+  padding: 4px;
+  box-sizing: border-box;
+  pointer-events: auto;
+  transition: width 0.18s ease;
+}
+
+.onebot-webqq__avatar-capsule.is-expanded {
+  width: var(--onebot-webqq-avatar-capsule-expanded-width, var(--onebot-webqq-avatar-capsule-collapsed-width, 50px));
+}
+
+.onebot-webqq__avatar {
+  position: relative;
+  width: 42px;
+  height: 42px;
+  margin-right: 10px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--k-color-primary, #409eff);
+  background: var(--k-color-primary-fade, rgba(64, 158, 255, 0.12));
+}
+.onebot-webqq__avatar img {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  object-fit: cover;
+}
+.onebot-webqq__avatar .onebot-webqq__avatar-icon {
+  width: 22px;
+  height: 22px;
+}
+
+.onebot-webqq__avatar-button {
+  position: relative;
+  z-index: 2;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 10px 0 0;
+  padding: 0;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
+  pointer-events: auto;
+}
+.onebot-webqq__avatar-button .onebot-webqq__avatar {
+  margin-right: 0;
+}
+
+.onebot-webqq__avatar-capsule .onebot-webqq__avatar-button {
+  margin: 0;
+}
+
+.onebot-webqq__bot-stack {
+  position: relative;
+  z-index: 2;
+  width: var(--onebot-webqq-stack-collapsed-width, 42px);
+  height: 42px;
+  margin: 0;
+  flex-shrink: 0;
+  pointer-events: auto;
+  transition: width 0.18s ease;
+}
+.onebot-webqq__bot-stack.is-expanded {
+  width: var(--onebot-webqq-stack-expanded-width, var(--onebot-webqq-stack-collapsed-width, 42px));
+}
+.onebot-webqq__bot-stack.is-expanded .onebot-webqq__bot-switch {
+  right: var(--onebot-webqq-bot-expanded-right, 0);
+  opacity: 1;
+  pointer-events: auto;
+}
+.onebot-webqq__bot-stack.is-expanded .onebot-webqq__bot-overflow {
+  right: var(--onebot-webqq-bot-overflow-expanded-right, var(--onebot-webqq-bot-overflow-right, 0));
+  opacity: 0;
+}
+
+.onebot-webqq__bot-switch {
+  position: absolute;
+  right: var(--onebot-webqq-bot-collapsed-right, 0);
+  top: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
+  transition: opacity 0.12s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.onebot-webqq__bot-switch::before, .onebot-webqq__bot-switch::after {
+  content: none;
+  display: none;
+}
+.onebot-webqq__bot-switch .onebot-webqq__avatar {
+  margin-right: 0;
+}
+.onebot-webqq__bot-switch.is-collapsed-extra {
+  opacity: 0;
+  pointer-events: none;
+}
+.onebot-webqq__bot-switch:hover, .onebot-webqq__bot-switch:focus-visible {
+  z-index: 20;
+}
+.onebot-webqq__bot-switch:focus-visible {
+  outline: 2px solid var(--k-color-primary, #409eff);
+  outline-offset: 3px;
+}
+
+.onebot-webqq__bot-stack.is-expanded .onebot-webqq__bot-switch.is-collapsed-extra {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.onebot-webqq__bot-switch.is-overlapped .onebot-webqq__avatar {
+  --onebot-webqq-avatar-overlap-center: 45px;
+  --onebot-webqq-avatar-overlap-cutout: radial-gradient(circle 23px at var(--onebot-webqq-avatar-overlap-center) 21px, transparent 98%, #000 100%);
+  box-shadow: none;
+  -webkit-mask-image: var(--onebot-webqq-avatar-overlap-cutout);
+  mask-image: var(--onebot-webqq-avatar-overlap-cutout);
+}
+
+.onebot-webqq__bot-stack.is-expanded .onebot-webqq__bot-switch.is-overlapped .onebot-webqq__avatar {
+  --onebot-webqq-avatar-overlap-center: 52px;
+}
+
+.onebot-webqq__bot-overflow {
+  position: absolute;
+  right: var(--onebot-webqq-bot-overflow-right, 0);
+  top: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  padding-right: 18px;
+  box-sizing: border-box;
+  border-radius: 50%;
+  color: var(--k-text-dark, var(--fg1, #1f2328));
+  background: color-mix(in srgb, var(--k-color-primary, #409eff) 16%, #ffffff 84%);
+  overflow: hidden;
+  font-size: var(--onebot-webqq-font-2xs);
+  font-weight: 700;
+  line-height: 1;
+  text-align: left;
+  pointer-events: none;
+  z-index: var(--onebot-webqq-bot-overflow-z-index, 0);
+  transition: opacity 0.12s ease;
+  will-change: opacity;
+  --onebot-webqq-avatar-overlap-center: 45px;
+  --onebot-webqq-avatar-overlap-cutout: radial-gradient(circle 23px at var(--onebot-webqq-avatar-overlap-center) 21px, transparent 98%, #000 100%);
+  box-shadow: none;
+  -webkit-mask-image: var(--onebot-webqq-avatar-overlap-cutout);
+  mask-image: var(--onebot-webqq-avatar-overlap-cutout);
+}
+
+.onebot-webqq__bot-overflow-avatar,
+.onebot-webqq__bot-overflow-label {
+  position: absolute;
+  inset: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: inherit;
+}
+
+.onebot-webqq__bot-overflow-avatar {
+  opacity: 0;
+  clip-path: inset(0 100% 0 0 round 999px);
+}
+.onebot-webqq__bot-overflow-avatar img {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  object-fit: cover;
+}
+.onebot-webqq__bot-overflow-avatar .onebot-webqq__avatar-icon {
+  width: 22px;
+  height: 22px;
+}
+
+.onebot-webqq__bot-overflow-label {
+  padding-right: 18px;
+  box-sizing: border-box;
+  background: inherit;
+  clip-path: inset(0 0 0 0 round 999px);
+}
+
+.onebot-webqq__bot-overflow-plus,
+.onebot-webqq__bot-overflow-count {
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+}
+
+.onebot-webqq__bot-stack.is-overflow-expanding .onebot-webqq__bot-overflow {
+  opacity: 1;
+}
+
+.onebot-webqq__bot-stack.is-overflow-expanding .onebot-webqq__bot-switch.is-collapsed-extra,
+.onebot-webqq__bot-stack.is-overflow-collapsing .onebot-webqq__bot-switch.is-collapsed-extra {
+  opacity: 1;
+  pointer-events: none;
+  transition: none;
+}
+
+.onebot-webqq__bot-stack.is-overflow-collapsing .onebot-webqq__bot-overflow {
+  opacity: 1;
+}
+.onebot-webqq__bot-stack.is-overflow-collapsing .onebot-webqq__bot-overflow .onebot-webqq__bot-overflow-avatar {
+  animation: onebot-webqq-bot-overflow-avatar-erase 190ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.onebot-webqq__bot-stack.is-overflow-collapsing .onebot-webqq__bot-overflow .onebot-webqq__bot-overflow-label {
+  animation: onebot-webqq-bot-overflow-label-reveal 190ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.onebot-webqq__avatar-unread {
+  position: absolute;
+  top: -5px;
+  right: -10px;
+  z-index: 3;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  box-sizing: border-box;
+  border: 2px solid #ffffff;
+  border-radius: 999px;
+  color: #fff;
+  background: #ef4444;
+  font-size: var(--onebot-webqq-font-2xs);
+  font-weight: 700;
+  line-height: 14px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.onebot-webqq__avatar-guide {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 1;
+  width: 46px;
+  height: 46px;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+
+.onebot-webqq__avatar-guide-ring {
+  position: absolute;
+  left: 1px;
+  top: 1px;
+  width: 44px;
+  height: 44px;
+  border: 2px solid var(--onebot-webqq-webqq-accent, #2563eb);
+  border-radius: 50%;
+  box-shadow: 0 0 12px var(--onebot-webqq-webqq-accent-shadow, rgba(37, 99, 235, 0.24));
+}
+
+.onebot-webqq__avatar-guide-pulse {
+  position: absolute;
+  left: 1px;
+  top: 1px;
+  width: 44px;
+  height: 44px;
+  border: 1px solid color-mix(in srgb, var(--onebot-webqq-webqq-accent, #2563eb) 42%, transparent);
+  border-radius: 50%;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+.onebot-webqq__status {
+  position: absolute;
+  right: 1px;
+  bottom: 1px;
+  z-index: 2;
+  width: 10px;
+  height: 10px;
+  border: 2px solid var(--k-side-bg, var(--bg1, #f9f9fa));
+  border-radius: 50%;
+  background: var(--k-color-danger, #f56c6c);
+}
+.onebot-webqq__status.is-online {
+  background: var(--k-color-success, #67c23a);
+}
+.onebot-webqq__status.is-pending {
+  background: var(--k-color-warning, #e49400);
+}
+
+.onebot-webqq__body {
+  position: fixed;
+  right: var(--onebot-webqq-capsule-right, 24px);
+  bottom: var(--onebot-webqq-capsule-bottom, 56px);
+  z-index: 10001;
+  width: 157px;
+  height: 50px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 7px 12px;
+  box-sizing: border-box;
+  color: var(--k-text-dark, var(--fg1, #1f2328));
+  pointer-events: auto;
+}
+
+.onebot-webqq__title-line,
+.onebot-webqq__title,
+.onebot-webqq__meta {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.onebot-webqq__title-line {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  gap: 8px;
+}
+
+.onebot-webqq__title {
+  min-width: 0;
+  flex-shrink: 1;
+  font-size: var(--onebot-webqq-font-md);
+  font-weight: 700;
+  line-height: 18px;
+}
+
+.onebot-webqq__title-status {
+  flex-shrink: 0;
+  font-size: var(--onebot-webqq-font-sm);
+  line-height: 18px;
+  color: var(--k-text-normal, var(--fg2, rgba(40, 40, 44, 0.7)));
+}
+
+.onebot-webqq__meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: var(--onebot-webqq-font-sm);
+  line-height: 18px;
+  color: var(--k-text-normal, var(--fg2, rgba(40, 40, 44, 0.7)));
+}
+
+.onebot-webqq__activity,
+.onebot-webqq__title-status {
+  min-width: 0;
+}
+.onebot-webqq__activity.is-thinking,
+.onebot-webqq__title-status.is-thinking {
+  color: transparent;
+  background: linear-gradient(100deg, var(--k-text-normal, var(--fg2, rgba(40, 40, 44, 0.55))) 30%, var(--k-text-dark, var(--fg1, rgba(31, 35, 40, 0.92))) 45%, var(--k-text-normal, var(--fg2, rgba(40, 40, 44, 0.55))) 60%);
+  background-size: 240% 100%;
+  background-position: 120% 0;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: onebot-webqq-thinking-shimmer 1.8s linear infinite;
+  animation-delay: -0.01s;
+}
+
+.onebot-webqq__activity {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.onebot-webqq__activity.is-conversation {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.onebot-webqq__activity-prefix,
+.onebot-webqq__activity-suffix {
+  flex-shrink: 0;
+}
+
+.onebot-webqq__activity-user {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.onebot-webqq__tooltip {
+  position: absolute;
+  left: var(--onebot-webqq-tooltip-left, 0);
+  bottom: calc(100% + 6px);
+  z-index: 30;
+  width: max-content;
+  max-width: calc(100vw - 24px);
+  color: var(--k-text-dark, var(--fg1, #1f2328));
+  filter: drop-shadow(0 6px 14px rgba(15, 23, 42, 0.14));
+  pointer-events: none;
+}
+
+.onebot-webqq__tooltip-content {
+  display: block;
+  padding: 4px 8px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.62);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.16);
+  font-size: var(--onebot-webqq-font-xs);
+  font-weight: 500;
+  line-height: 16px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.onebot-webqq-tooltip-enter-active,
+.onebot-webqq-tooltip-leave-active {
+  transition: opacity 0.12s ease, transform 0.12s ease;
+}
+
+.onebot-webqq-tooltip-enter-from,
+.onebot-webqq-tooltip-leave-to {
+  opacity: 0;
+  transform: translateY(2px) scale(0.98);
+}

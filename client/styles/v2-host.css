@@ -1,0 +1,45 @@
+/* 接入 ChatLuna v2 宿主时的适配规则。原插件的样式文件按原样保留，宿主差异集中写在这里。 */
+
+/* 原插件读 Koishi 控制台的文字与状态变量，未定义时用亮色兜底值。暗色作用域补上 Koishi 暗色主题的对应值，
+   否则暗色下这些文字会沿用亮色兜底，糊在深色背景上。 */
+:is(.onebot-webqq, .onebot-webqq__body, .onebot-webqq-webqq, .webqq-dialog-content, .webqq-context-menu-content, .onebot-webqq-webqq__portal-page, .onebot-webqq-webqq__notice-menu).is-color-dark {
+  --k-text: rgba(255, 255, 245, 0.86);
+  --k-text-dark: rgba(255, 255, 245, 0.86);
+  --k-text-normal: rgba(235, 235, 245, 0.6);
+  --k-text-light: rgba(235, 235, 245, 0.38);
+  --k-side-bg: #252529;
+  --k-color-divider: #3a3a3e;
+}
+
+/* ui-kit 的 Dialog 负责焦点、Esc、Portal 与读屏语义，版式沿用原插件：顶部对齐、固定宽度。
+   kit 的居中定位用 top/left 加 translate，宽度上限在 sm 断点收到 24rem，都要盖掉。 */
+.webqq-dialog-content[data-slot=dialog-content] {
+  top: 16px;
+  left: 0;
+  right: 0;
+  z-index: 10201;
+  translate: none;
+  max-width: none;
+}
+
+/* kit 的遮罩固定是 z-50，排在观察窗（10001）下面。紧随其后的弹窗属于 WebQQ 时，把遮罩提到弹窗之下，
+   外观换回原插件的半透明压暗。 */
+[data-slot=dialog-overlay]:has(~ .webqq-dialog-content) {
+  z-index: 10200;
+  background: rgba(15, 23, 42, 0.35);
+}
+
+/* 右键菜单的定位层同样固定 z-50。 */
+:has(> .webqq-context-menu-content) {
+  z-index: 10140;
+}
+
+/* kit 菜单自带的滑动高亮会与原插件的条目高亮叠成两层。 */
+.webqq-context-menu-content > [data-slot=sliding-highlight] {
+  display: none;
+}
+
+/* kit Button 的默认变体悬停时换成 v2 主题色；WebQQ 按钮始终用强调色。 */
+.webqq-ui-button:not([data-variant=outline]):hover {
+  background: var(--webqq-accent, #2563eb);
+}

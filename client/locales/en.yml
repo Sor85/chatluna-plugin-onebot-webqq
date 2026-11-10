@@ -1,0 +1,197 @@
+capsule.bot: Bot
+capsule.idle: Idle
+capsule.idleActivity: Idle
+capsule.open: Open WebQQ
+capsule.openBot: Open WebQQ for {name}
+capsule.openWithUnread: Open WebQQ, {count} unread messages
+capsule.switchBot: Switch WebQQ to {name}
+capsule.talking: Talking with {name}
+capsule.talkingPrefix: 'Talking with '
+capsule.talkingSuffix: ''
+capsule.thinking: Thinking
+webqq.chat.botThinking: Bot is thinking
+webqq.chat.empty: No messages
+webqq.chat.emptySubtitle: Friends / Groups
+webqq.chat.face: Emoji
+webqq.chat.forwardCount: View {count} forwarded messages
+webqq.chat.image: Image
+webqq.chat.jumpToQuote: Jump to quoted message
+webqq.chat.loadMore: View earlier messages
+webqq.chat.loadingMore: Loading...
+webqq.chat.recalled: Recalled
+webqq.chat.scrollBottom: Scroll to bottom
+webqq.chat.selectConversation: No conversation selected
+webqq.chat.viewForward: View forwarded messages
+webqq.chat.viewImage: View full image
+webqq.chat.viewProfileOf: View profile of {name}
+webqq.common.cancel: Cancel
+webqq.common.close: Close
+webqq.common.confirm: Confirm
+webqq.common.loading: Loading
+webqq.common.processing: Processing...
+webqq.common.save: Save
+webqq.composer.chooseFile: Select files
+webqq.composer.clearReply: Clear reply
+webqq.composer.mentionMenu: Mention a member
+webqq.composer.noMentionMatch: No matching members
+webqq.composer.placeholder: Message
+webqq.composer.previewFile: Preview {name}
+webqq.composer.removeFile: Remove {name}
+webqq.composer.replyTo: 'Reply to {name}: {summary}'
+webqq.composer.send: Send
+webqq.composer.video: Video {name}
+webqq.contacts.emptyFriends: No friends
+webqq.contacts.emptyGroups: No groups
+webqq.contacts.emptyRecent: No recent conversations
+webqq.contacts.friendsCategory: Friends
+webqq.contacts.searchFriends: Search friends...
+webqq.contacts.searchGroups: Search groups...
+webqq.dialog.deleteFriend.confirm: Delete friend
+webqq.dialog.deleteFriend.description: This removes “{name}” from the friend list.
+webqq.dialog.deleteFriend.title: Delete friend
+webqq.dialog.groupCard.description: An empty value clears the group card.
+webqq.dialog.groupCard.placeholder: Group card
+webqq.dialog.groupCard.title: Edit group card
+webqq.dialog.groupTitle.description: Only the group owner can assign a special title. An empty value clears the title.
+webqq.dialog.groupTitle.placeholder: Special title
+webqq.dialog.groupTitle.title: Set special title
+webqq.dialog.kick.confirm: Remove from group
+webqq.dialog.kick.description: This removes “{name}” from this group.
+webqq.dialog.kick.title: Remove from group
+webqq.dialog.leaveGroup.confirm: Leave group
+webqq.dialog.leaveGroup.description: This leaves the group “{name}”.
+webqq.dialog.leaveGroup.title: Leave group
+webqq.dialog.remark.description: The remark is visible only to the current bot and does not change the user's profile nickname.
+webqq.dialog.remark.placeholder: An empty value clears the remark
+webqq.dialog.remark.title: Set friend remark
+webqq.emoji.all: All emoji
+webqq.emoji.common: Recommended
+webqq.emoji.noMatch: No matching emoji
+webqq.emoji.recent: Frequently used
+webqq.emoji.results: Search results
+webqq.emoji.search: Search emoji
+webqq.emoji.searchPlaceholder: Search emoji name, pinyin or ID
+webqq.error.action: Operation failed
+webqq.error.handleNotice: Failed to handle notification
+webqq.error.loadContacts: Failed to load contacts
+webqq.error.loadGroupInfo: Failed to load group information
+webqq.error.loadHistory: Failed to load message history
+webqq.error.loadHistoryCache: Failed to load cached messages
+webqq.error.loadNotices: Failed to load notifications
+webqq.error.loadOlderHistory: Failed to load earlier messages
+webqq.error.loadProfile: Failed to load profile
+webqq.error.notGroup: The current conversation is not a group
+webqq.error.pokeFriend: Failed to poke friend
+webqq.error.pokeMember: Failed to poke group member
+webqq.error.react: Failed to add reaction
+webqq.error.recall: Failed to recall message
+webqq.error.search: Failed to search messages
+webqq.error.searchTimeout: Message search timed out
+webqq.error.send: Failed to send message
+webqq.error.sendDisabled: Sending is disabled
+webqq.error.setAdmin: Failed to grant administrator role
+webqq.error.unreact: Failed to remove reaction
+webqq.error.unsetAdmin: Failed to revoke administrator role
+webqq.error.updateProfile: Failed to update profile
+webqq.forward.close: Close forwarded messages
+webqq.forward.title: Forwarded messages
+webqq.forwardTarget.description: The selected messages are forwarded together to a recent conversation, friend or group.
+webqq.forwardTarget.failed: Failed to forward messages
+webqq.forwardTarget.list: Target conversations
+webqq.forwardTarget.noFriends: No friend conversations
+webqq.forwardTarget.noGroups: No joined groups
+webqq.forwardTarget.noMatch: No matching conversations
+webqq.forwardTarget.search: Search target conversations
+webqq.forwardTarget.searchPlaceholder: Search recent conversations, friends or groups...
+webqq.forwardTarget.sending: Forwarding...
+webqq.forwardTarget.submit: Forward messages
+webqq.forwardTarget.tabs: Target categories
+webqq.forwardTarget.title: Select forwarding target
+webqq.group.announcements: Announcements
+webqq.group.close: Close group information
+webqq.group.emptyAnnouncements: No announcements
+webqq.group.emptyMembers: No group members
+webqq.group.members: Members
+webqq.group.open: More group information
+webqq.group.searchMembers: Search group nickname or QQ number
+webqq.group.title: Group information
+webqq.groupSubtitle: Group {groupId} · {count} members
+webqq.member.kick: Remove from group
+webqq.member.kickAdminLimit: Administrators cannot manage the owner or other administrators
+webqq.member.kickNeedsAdmin: Administrator permission is required to remove members
+webqq.member.manage: Member actions
+webqq.member.mention: '@ User'
+webqq.member.poke: Poke
+webqq.member.setAdmin: Grant administrator role
+webqq.member.setCard: Edit group card
+webqq.member.setTitle: Set special title
+webqq.member.unsetAdmin: Revoke administrator role
+webqq.menu.deleteFriend: Delete friend
+webqq.menu.deleteRecent: Delete conversation
+webqq.menu.leaveGroup: Leave group
+webqq.menu.setRemark: Set friend remark
+webqq.menu.viewProfile: View profile
+webqq.message.react: Add reaction
+webqq.message.recall: Recall
+webqq.message.reply: Reply
+webqq.message.select: Select messages
+webqq.notice.approve: Approve
+webqq.notice.approved: Approved
+webqq.notice.empty: No notifications
+webqq.notice.friendRequests: Friend requests
+webqq.notice.groupNotices: Group notifications
+webqq.notice.reject: Reject
+webqq.notice.rejected: Rejected
+webqq.notice.title: Notifications
+webqq.preview.close: Close image preview
+webqq.preview.title: Image preview
+webqq.profile.avatarReadFailed: Failed to read avatar file
+webqq.profile.cancelEdit: Cancel editing {label}
+webqq.profile.changeAvatar: Change avatar
+webqq.profile.changingAvatar: Changing avatar…
+webqq.profile.editField: Edit {label}
+webqq.profile.editSex: Edit gender
+webqq.profile.group.account: Account profile
+webqq.profile.group.bot-runtime: Bot runtime
+webqq.profile.group.friendship: Friend information
+webqq.profile.group.group-member: Group membership
+webqq.profile.group.group: Group information
+webqq.profile.nicknamePlaceholder: Nickname
+webqq.profile.notePlaceholder: Personal signature
+webqq.profile.saveField: Save {label}
+webqq.profile.sex.female: Female
+webqq.profile.sex.male: Male
+webqq.profile.sex.unknown: Unknown
+webqq.profile.sexOptions: Gender options
+webqq.profile.unset: Not set
+webqq.record.failed: Transcription failed
+webqq.record.play: Play voice message
+webqq.record.transcribe: Transcribe voice message
+webqq.record.unrecognized: (Not recognized)
+webqq.search.chooseDate: Message date
+webqq.search.chooseMonth: Month
+webqq.search.chooseYear: Year
+webqq.search.clear: Clear search
+webqq.search.close: Close message search
+webqq.search.date: Filter messages by date
+webqq.search.dateActive: Filter date, currently {date}
+webqq.search.input: Search message text
+webqq.search.month: 'Month {month}'
+webqq.search.more: Load more results
+webqq.search.nextMonth: Next month
+webqq.search.noMatch: No matching messages
+webqq.search.placeholder: Search messages...
+webqq.search.prevMonth: Previous month
+webqq.search.results: Search results
+webqq.search.searching: Searching...
+webqq.search.title: Search message history
+webqq.search.weekdays: Mon,Tue,Wed,Thu,Fri,Sat,Sun
+webqq.search.year: '{year}'
+webqq.selection.count: '{count} selected'
+webqq.selection.toolbar: Message selection actions
+webqq.tabs.friends: Friends
+webqq.tabs.groups: Groups
+webqq.tabs.recent: Recent
+webqq.thinking.duration: Thought for {seconds}s
+webqq.thinking.usageLabel: ChatLuna call metrics
+webqq.window: WebQQ

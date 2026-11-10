@@ -1,0 +1,41 @@
+/* 排版基线与字号标度。
+
+   宿主 Koishi 控制台的 app/index.scss 只给 body 设 margin 与 font-family，不设 font-size，
+   所以任何没被插件显式声明字号的节点都会一路继承到浏览器默认的 16px。实测（真实 Chrome 152
+   与 Firefox 153，观察窗整树 221 个节点）治理前只有两个有文字的节点落在 16px：
+   .onebot-webqq-webqq__send-text 与 .onebot-webqq-webqq__send-placeholder。这两处写了
+   font: inherit（为压掉 contenteditable 与表单控件自带的字体族），于是草稿文字比同一个表单里的
+   文件名（12px）和消息气泡（13px）都大一号。这类差异不会报错，只能靠显式基准根治。
+
+   Portal / Teleport 到 body 的浮层不在插件根的后代里，必须逐个列出自己的根选择器；漏掉任何一个，
+   那棵子树里的字号令牌会解析失败并退回继承值，失败形态和完全没有治理时一致。这份清单与
+   webqq-box-model.scss 的浮层清单必须一致，新增浮层时两处一起登记。 */
+.onebot-webqq-host,
+.webqq-context-menu-content,
+.webqq-dialog-content,
+.onebot-webqq-webqq__portal-page,
+.onebot-webqq-webqq__notice-menu,
+.onebot-webqq-webqq__scrollbar-overlay {
+  /* 字号标度：七档，从角标到弹窗标题，每档一个用途。新增文字从这里取值，
+     确实需要新档位时先扩展标度，不要就地写字面值。 */
+  --onebot-webqq-font-2xs: 10px; /* 角标计数：未读、机器人溢出、好感度 */
+  --onebot-webqq-font-xs: 11px; /* 微标签：发送者名、时间、等级、身份标签 */
+  --onebot-webqq-font-sm: 12px; /* 次要文字：摘要、群公告正文、思考指标 */
+  --onebot-webqq-font-md: 13px; /* 正文，同时是基准字号：消息气泡、联系人名、标签页 */
+  --onebot-webqq-font-lg: 14px; /* 强调文字：二级页标题、按钮文案 */
+  --onebot-webqq-font-xl: 15px; /* 区域标题：会话标题、群信息标题 */
+  --onebot-webqq-font-2xl: 16px; /* 弹窗标题 */
+  --onebot-webqq-line-height-md: 20px; /* 基准行高，与正文档位配对 */
+  font-size: var(--onebot-webqq-font-md);
+}
+
+/* 行高基准。.onebot-webqq-host 的 line-height: 0 是小胶囊的既有基线（压掉行内空白导致的
+   基线间隙），不能被这里覆盖，所以观察窗与各浮层各自声明自己的行高，胶囊继续用宿主壳上的那份。 */
+.onebot-webqq-webqq,
+.webqq-context-menu-content,
+.webqq-dialog-content,
+.onebot-webqq-webqq__portal-page,
+.onebot-webqq-webqq__notice-menu,
+.onebot-webqq-webqq__scrollbar-overlay {
+  line-height: var(--onebot-webqq-line-height-md);
+}

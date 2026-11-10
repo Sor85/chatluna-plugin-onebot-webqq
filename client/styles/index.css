@@ -1,0 +1,18 @@
+/* 顺序与原插件 style.scss 一致：盒模型与排版基线在前，主题色覆盖在最后；宿主适配规则压在末尾。 */
+@import './webqq-box-model.css';
+@import './webqq-typography.css';
+@import './capsule.css';
+@import './webqq-shell.css';
+@import './webqq-chat.css';
+@import './webqq-group-info.css';
+@import './webqq-notices.css';
+@import './webqq-messages.css';
+@import './webqq-message-cards.css';
+@import './webqq-message-overlays.css';
+@import './webqq-message-effects.css';
+@import './webqq-interactions.css';
+@import './theme-colors.css';
+@import './keyframes.css';
+@import './v2-host.css';
+
+@import './glass.css';

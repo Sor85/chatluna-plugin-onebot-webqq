@@ -1,0 +1,46 @@
+.onebot-webqq-webqq__card {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 8px;
+  color: inherit;
+  background: rgba(255, 255, 255, 0.38);
+  text-decoration: none;
+}
+
+.onebot-webqq-webqq__card-cover {
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  border-radius: 6px;
+  object-fit: cover;
+}
+
+.onebot-webqq-webqq__card-content {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.onebot-webqq-webqq__card-title {
+  overflow: hidden;
+  color: var(--k-text, var(--fg1, rgba(30, 30, 34, 0.78)));
+  font-weight: 600;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.onebot-webqq-webqq__card-desc {
+  color: var(--k-text-normal, var(--fg2, rgba(40, 40, 44, 0.62)));
+  overflow-wrap: anywhere;
+}
+
+.onebot-webqq-webqq__card-source {
+  color: #94a3b8;
+  font-size: var(--onebot-webqq-font-xs);
+  line-height: 16px;
+}

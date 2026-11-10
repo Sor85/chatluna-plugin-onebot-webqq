@@ -1,0 +1,55 @@
+/* 毛玻璃与 ui-kit 的 bg-glass / bg-glass-page / backdrop-blur-glass 同源。
+   不给观察窗或聊天列本身加滤镜：模糊留在伪元素和浮层，避免截断子浮层的 backdrop 采样。 */
+:is(.onebot-webqq, .onebot-webqq__body, .onebot-webqq-webqq, .webqq-dialog-content, .webqq-context-menu-content, .onebot-webqq-webqq__portal-page, .onebot-webqq-webqq__notice-menu) {
+  --webqq-glass: var(--glass);
+  --webqq-glass-page: var(--glass-page);
+  --webqq-glass-blur: var(--glass-blur);
+}
+
+/* 手动明暗与宿主不同时，仅在插件根镜像 ui-kit 的两档令牌，不修改宿主主题。
+   自动模式与宿主一致，直接使用上面的 ui-kit 令牌。 */
+html:not(.dark) :is(.onebot-webqq, .onebot-webqq__body, .onebot-webqq-webqq, .webqq-dialog-content, .webqq-context-menu-content, .onebot-webqq-webqq__portal-page, .onebot-webqq-webqq__notice-menu).is-color-dark {
+  --webqq-glass: color-mix(in oklab, #212121 88%, transparent);
+  --webqq-glass-page: color-mix(in oklab, #0f0f0f 74%, transparent);
+  --webqq-glass-blur: 12px;
+}
+html.dark :is(.onebot-webqq, .onebot-webqq__body, .onebot-webqq-webqq, .webqq-dialog-content, .webqq-context-menu-content, .onebot-webqq-webqq__portal-page, .onebot-webqq-webqq__notice-menu).is-color-light {
+  --webqq-glass: color-mix(in oklab, #ffffff 84%, transparent);
+  --webqq-glass-page: color-mix(in oklab, #ffffff 70%, transparent);
+  --webqq-glass-blur: 10px;
+}
+
+.onebot-webqq.is-frosted::before,
+.onebot-webqq-host:has(.onebot-webqq.is-frosted) .onebot-webqq__tooltip-content,
+.onebot-webqq-webqq.is-frosted::before,
+.onebot-webqq-webqq.is-frosted .onebot-webqq-webqq__chat-header::before {
+  background: var(--webqq-glass-page);
+  backdrop-filter: blur(var(--webqq-glass-blur));
+}
+
+.onebot-webqq-webqq.is-frosted .onebot-webqq-webqq__send::before,
+.onebot-webqq-webqq.is-frosted :is(.onebot-webqq-webqq__send-file, .onebot-webqq-webqq__send-image, .onebot-webqq-webqq__mention-menu, .onebot-webqq-webqq__scroll-bottom, .onebot-webqq-webqq__selection-bar, .onebot-webqq-webqq__message-search-results, .onebot-webqq-webqq__message-search-date-popover, .onebot-webqq-webqq__message-search-calendar-menu),
+.onebot-webqq-webqq__notice-menu.is-frosted,
+.onebot-webqq-webqq__secondary-page.onebot-webqq-webqq__portal-page.is-frosted,
+.onebot-webqq-webqq__portal-page.is-frosted .onebot-webqq-webqq__profile-card-select-menu,
+body[data-onebot-webqq-frosted] :is(.webqq-dialog-content, .webqq-context-menu-content) {
+  background: var(--webqq-glass);
+  backdrop-filter: blur(var(--webqq-glass-blur));
+}
+
+/* 遮罩沿用 ui-kit 的渐变压暗。仅选择 WebQQ 的遮罩，不影响宿主或其他插件的 Dialog。 */
+[data-slot=dialog-overlay]:has(~ .webqq-dialog-content),
+.onebot-webqq-webqq__forward-modal-backdrop {
+  background: linear-gradient(to bottom, var(--scrim-from), var(--scrim-to));
+}
+
+/* 无背景模糊能力时用实体面，不能只剩半透明背景而透出后方文字。 */
+@supports not (backdrop-filter: blur(1px)) {
+  .onebot-webqq.is-frosted::before,
+  .onebot-webqq-webqq.is-frosted::before,
+  .onebot-webqq-webqq__notice-menu.is-frosted,
+  .onebot-webqq-webqq__secondary-page.onebot-webqq-webqq__portal-page.is-frosted,
+  body[data-onebot-webqq-frosted] :is(.webqq-dialog-content, .webqq-context-menu-content) {
+    background: var(--webqq-panel, var(--popover));
+  }
+}
