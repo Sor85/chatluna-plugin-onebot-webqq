@@ -22,7 +22,8 @@ html.dark :is(.onebot-webqq, .onebot-webqq__body, .onebot-webqq-webqq, .webqq-di
 .onebot-webqq.is-frosted::before,
 .onebot-webqq-host:has(.onebot-webqq.is-frosted) .onebot-webqq__tooltip-content,
 .onebot-webqq-webqq.is-frosted::before,
-.onebot-webqq-webqq.is-frosted .onebot-webqq-webqq__chat-header::before {
+.onebot-webqq-webqq.is-frosted .onebot-webqq-webqq__chat-header::before,
+.onebot-webqq-webqq__secondary-page.onebot-webqq-webqq__portal-page.is-frosted > .onebot-webqq-webqq__secondary-page-header {
   background: var(--webqq-glass-page);
   backdrop-filter: blur(var(--webqq-glass-blur));
 }
@@ -49,6 +50,7 @@ body[data-onebot-webqq-frosted] :is(.webqq-dialog-content, .webqq-context-menu-c
   .onebot-webqq-webqq.is-frosted::before,
   .onebot-webqq-webqq__notice-menu.is-frosted,
   .onebot-webqq-webqq__secondary-page.onebot-webqq-webqq__portal-page.is-frosted,
+  .onebot-webqq-webqq__secondary-page.onebot-webqq-webqq__portal-page.is-frosted > .onebot-webqq-webqq__secondary-page-header,
   body[data-onebot-webqq-frosted] :is(.webqq-dialog-content, .webqq-context-menu-content) {
     background: var(--webqq-panel, var(--popover));
   }
