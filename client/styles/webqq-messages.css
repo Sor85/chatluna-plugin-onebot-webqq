@@ -912,6 +912,35 @@
   clip-path: path("M 8 0 L 0 0 L 0 14 Q 0 3 8 0 Z");
 }
 
+/* 对方气泡描边样式（webQQIncomingBubbleStyle = outline），只作用于亮色。border 包不到气泡外的尖角，
+   尖角改画内联 SVG；SVG 里的 #fff 与 #e9eaec 是下面背景与边框的字面值，改色要同步。
+   border 占去 1px，内边距相应减 1px，气泡尺寸与投影样式一致；伪元素的定位基准随 border 内缩 1px，尖角外移 1px。 */
+.onebot-webqq-webqq.is-color-light.has-incoming-bubble-outline .onebot-webqq-webqq__message:not(.is-outgoing) .onebot-webqq-webqq__bubble {
+  --onebot-webqq-webqq-bubble-bg: #fff;
+  padding: 8px 10px;
+  border: 1px solid #e9eaec;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+}
+
+.onebot-webqq-webqq.is-color-light.is-chat-style-tim.has-tim-bubble-tail.has-incoming-bubble-outline .onebot-webqq-webqq__message:not(.is-outgoing):not(.is-merged) .onebot-webqq-webqq__bubble::before {
+  top: -1px;
+  left: -9px;
+  width: 9px;
+  height: 15px;
+  clip-path: none;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='15'%3E%3Cpath d='M0 .5H9V15H8.5Q8.5 3.5 0 .5Z' fill='%23fff'/%3E%3Cpath d='M8.5 15Q8.5 3.5 0 .5H9' fill='none' stroke='%23e9eaec'/%3E%3C/svg%3E") no-repeat;
+}
+
+/* 内心活动面板与对方气泡同一套描边，左侧强调线保留。 */
+.onebot-webqq-webqq.is-color-light.has-incoming-bubble-outline .onebot-webqq-webqq__thinking-content {
+  padding: 7px 9px 7px 10px;
+  border: 1px solid #e9eaec;
+  border-left: 2px solid rgba(148, 163, 184, 0.54);
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+}
+
 .onebot-webqq-webqq__bubble {
   display: flex;
   max-width: 100%;

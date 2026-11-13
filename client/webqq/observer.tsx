@@ -230,6 +230,7 @@ export function WebQQObserver(props: { visible: boolean }) {
         settings.enableWebQQFrostedGlass ? 'is-frosted' : 'is-plain',
         `is-chat-style-${settings.webQQChatStyle}`,
         settings.webQQTimBubbleTail ? 'has-tim-bubble-tail' : '',
+        settings.webQQIncomingBubbleStyle === 'outline' ? 'has-incoming-bubble-outline' : '',
         settings.allowWebQQResize ? 'is-resizable' : '',
         resizing ? 'is-resizing' : '',
         `is-color-${colorMode}`,

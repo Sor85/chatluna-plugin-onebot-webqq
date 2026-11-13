@@ -8,6 +8,7 @@ import type { WebQQProtocol } from '../onebot/protocol'
 // 需要 Schema 的构造代码在 ./schema.ts。
 
 export type WebQQChatStyle = 'qq' | 'tim'
+export type WebQQIncomingBubbleStyle = 'shadow' | 'outline'
 export type WebQQColorMode = 'auto' | 'light' | 'dark'
 export type WebQQStorageBackend = 'browser' | 'database'
 
@@ -48,6 +49,7 @@ const configSpec = {
   enableWebQQSend: { default: false, mirrored: true },
   webQQChatStyle: { default: 'tim' as WebQQChatStyle, mirrored: true, blankIsUnset: true },
   webQQTimBubbleTail: { default: true, mirrored: true },
+  webQQIncomingBubbleStyle: { default: 'shadow' as WebQQIncomingBubbleStyle, mirrored: true, blankIsUnset: true },
   webQQColorMode: { default: 'auto' as WebQQColorMode, mirrored: true, blankIsUnset: true },
   webQQAccentColor: { default: '#2563eb', mirrored: true, blankIsUnset: true },
   allowWebQQResize: { default: false, mirrored: true },

@@ -6,6 +6,7 @@ import {
   type ConfigValue,
   type WebQQChatStyle,
   type WebQQColorMode,
+  type WebQQIncomingBubbleStyle,
   type WebQQStorageBackend,
 } from './spec'
 
@@ -27,6 +28,7 @@ export interface Config {
   enableWebQQSend?: boolean
   webQQChatStyle?: WebQQChatStyle
   webQQTimBubbleTail?: boolean
+  webQQIncomingBubbleStyle?: WebQQIncomingBubbleStyle
   webQQColorMode?: WebQQColorMode
   webQQAccentColor?: string
   enableCapsuleFrostedGlass?: boolean
@@ -97,6 +99,11 @@ export const Config: Schema<Config> = Schema.intersect([
       .description('WebQQ 聊天页面样式'),
     webQQTimBubbleTail: Schema.boolean().default(readConfigDefault('webQQTimBubbleTail')).extra('label', 'TIM 气泡尖角')
       .description('显示 TIM 气泡小尖角'),
+    webQQIncomingBubbleStyle: Schema.union([
+      Schema.const('shadow').description('投影'),
+      Schema.const('outline').description('描边'),
+    ]).default(readConfigDefault('webQQIncomingBubbleStyle')).role('radio').extra('label', '对方气泡样式')
+      .description('投影为半透明白底加阴影，描边为白底加细边框；仅在亮色主题下生效'),
     webQQColorMode: Schema.union([
       Schema.const('auto').description('自动'),
       Schema.const('light').description('明亮'),
