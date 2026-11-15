@@ -58,7 +58,8 @@ for (const entry of ['lib', 'dist', 'tsconfig.tsbuildinfo']) fs.rmSync(path.join
 run('yarn', ['yakumo', 'build', 'onebot-webqq'], v2Root)
 run('yarn', ['workspace', name, 'typecheck'], v2Root)
 // 测试包含生产 CSS 守卫，读的是刚构建的 dist/client.css，必须排在构建之后。
-run(path.join(v2Root, 'node_modules', '.bin', 'vitest'), ['run'], target)
+// 用插件自己声明的 vitest；宿主根目录的 vitest 大版本可能不同。
+run('yarn', ['test'], target)
 
 // yarn pack 把 workspace:* 改写成具体版本，npm pack 不会。
 const workdir = fs.mkdtempSync(path.join(os.tmpdir(), 'onebot-webqq-'))
