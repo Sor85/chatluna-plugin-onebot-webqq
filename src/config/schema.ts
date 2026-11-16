@@ -46,6 +46,7 @@ export interface Config {
 
 // Schema 的形状手写：分组、字段顺序、控件类型、数值上下限与说明文案都不生成，只有默认值从配置规格读取。
 // v2 的 SchemaForm 缺 label 时把配置键当标题显示，所以每个字段都写 `extra('label')`。
+// 常用分组在前并保持展开；外观细节、回复信息、缓存调优与开发者选项低频，用 `collapse()` 默认折叠。
 export const Config: Schema<Config> = Schema.intersect([
   Schema.object({
     onebotUseRuntimeBots: Schema.boolean().default(readConfigDefault('onebotUseRuntimeBots')).extra('label', '使用全部 OneBot 机器人')
@@ -59,6 +60,62 @@ export const Config: Schema<Config> = Schema.intersect([
     ]).default(readConfigDefault('onebotProtocol')).role('radio').extra('label', 'OneBot 实现')
       .description('WebQQ 读取接口使用的 OneBot 实现协议'),
   }).description('连接设置'),
+
+  Schema.object({
+    enableCapsuleFrostedGlass: Schema.boolean().default(readConfigDefault('enableCapsuleFrostedGlass')).extra('label', '小胶囊毛玻璃')
+      .description('启用小胶囊毛玻璃效果'),
+    showWebQQCapsuleUnread: Schema.boolean().default(readConfigDefault('showWebQQCapsuleUnread')).extra('label', '显示未读数')
+      .description('在小胶囊机器人头像上显示 WebQQ 总未读数'),
+    hiddenCapsuleActivityIds: Schema.array(Schema.string()).role('onebot-webqq:route-select').default(readConfigDefault('hiddenCapsuleActivityIds')).extra('label', '隐藏小胶囊的页面')
+      .description('打开这些侧边栏页面时不显示小胶囊'),
+  }).description('小胶囊设置'),
+
+  Schema.object({
+    enableWebQQSend: Schema.boolean().default(readConfigDefault('enableWebQQSend')).extra('label', '消息发送')
+      .description('启用 WebQQ 消息发送功能'),
+    webQQChatStyle: Schema.union([
+      Schema.const('tim').description('TIM'),
+      Schema.const('qq').description('QQ'),
+    ]).default(readConfigDefault('webQQChatStyle')).role('radio').extra('label', '聊天页面样式')
+      .description('WebQQ 聊天页面样式'),
+    webQQColorMode: Schema.union([
+      Schema.const('auto').description('自动'),
+      Schema.const('light').description('明亮'),
+      Schema.const('dark').description('暗色'),
+    ]).default(readConfigDefault('webQQColorMode')).role('radio').extra('label', '颜色模式')
+      .description('自动模式跟随 ChatLuna 主题'),
+    webQQAccentColor: Schema.string().default(readConfigDefault('webQQAccentColor')).role('color').extra('label', '强调色')
+      .description('WebQQ 主题色'),
+    enableWebQQFrostedGlass: Schema.boolean().default(readConfigDefault('enableWebQQFrostedGlass')).extra('label', 'WebQQ 毛玻璃')
+      .description('启用 WebQQ 毛玻璃效果'),
+    allowWebQQResize: Schema.boolean().default(readConfigDefault('allowWebQQResize')).extra('label', '允许调整窗口大小')
+      .description('允许拖动 WebQQ 边缘调整窗口宽高'),
+  }).description('WebQQ 设置'),
+
+  Schema.object({
+    webQQTimBubbleTail: Schema.boolean().default(readConfigDefault('webQQTimBubbleTail')).extra('label', 'TIM 气泡尖角')
+      .description('显示 TIM 气泡小尖角'),
+    webQQIncomingBubbleStyle: Schema.union([
+      Schema.const('shadow').description('投影'),
+      Schema.const('outline').description('描边'),
+    ]).default(readConfigDefault('webQQIncomingBubbleStyle')).role('radio').extra('label', '对方气泡样式')
+      .description('投影为半透明白底加阴影，描边为白底加细边框；仅在亮色主题下生效'),
+    webQQMarkRecalledMessages: Schema.boolean().default(readConfigDefault('webQQMarkRecalledMessages')).extra('label', '保留撤回的消息')
+      .description('保留被撤回的消息并显示删除线，关闭后显示撤回事件并移除原消息'),
+    hideWebQQGroupLevel: Schema.boolean().default(readConfigDefault('hideWebQQGroupLevel')).extra('label', '隐藏群等级')
+      .description('隐藏 WebQQ 消息中的群等级徽标'),
+    showWebQQAffinity: Schema.boolean().default(readConfigDefault('showWebQQAffinity')).extra('label', '显示好感度')
+      .description('在用户昵称右侧显示 ChatLuna 角色引擎记录的好感度'),
+  }).description('消息显示').collapse(),
+
+  Schema.object({
+    showWebQQCharacterThinking: Schema.boolean().default(readConfigDefault('showWebQQCharacterThinking')).extra('label', '显示内心活动')
+      .description('显示 ChatLuna 角色引擎的 think 内容'),
+    showWebQQThinkingTokens: Schema.boolean().default(readConfigDefault('showWebQQThinkingTokens')).extra('label', '显示 token 用量')
+      .description('显示 ChatLuna 回复的输入与输出 token'),
+    showWebQQThinkingTiming: Schema.boolean().default(readConfigDefault('showWebQQThinkingTiming')).extra('label', '显示耗时')
+      .description('显示 ChatLuna 回复的 TTFT、TPS 与总耗时'),
+  }).description('回复信息').collapse(),
 
   Schema.object({
     historyLimit: Schema.natural().min(1).max(100).default(readConfigDefault('historyLimit')).extra('label', '历史加载条数')
@@ -76,57 +133,7 @@ export const Config: Schema<Config> = Schema.intersect([
       .description('WebQQ 图片代理内存缓存总上限'),
     webQQImageCacheItemLimitMB: Schema.natural().min(1).max(1024).default(readConfigDefault('webQQImageCacheItemLimitMB')).extra('label', '单张图片缓存上限（MB）')
       .description('单张图片超过此大小时不写入内存缓存'),
-  }).description('历史与缓存'),
-
-  Schema.object({
-    enableCapsuleFrostedGlass: Schema.boolean().default(readConfigDefault('enableCapsuleFrostedGlass')).extra('label', '小胶囊毛玻璃')
-      .description('启用小胶囊毛玻璃效果'),
-    showWebQQCapsuleUnread: Schema.boolean().default(readConfigDefault('showWebQQCapsuleUnread')).extra('label', '显示未读数')
-      .description('在小胶囊机器人头像上显示 WebQQ 总未读数'),
-    hiddenCapsuleActivityIds: Schema.array(Schema.string()).role('onebot-webqq:route-select').default(readConfigDefault('hiddenCapsuleActivityIds')).extra('label', '隐藏小胶囊的页面')
-      .description('打开这些侧边栏页面时不显示小胶囊'),
-  }).description('小胶囊设置'),
-
-  Schema.object({
-    enableWebQQFrostedGlass: Schema.boolean().default(readConfigDefault('enableWebQQFrostedGlass')).extra('label', 'WebQQ 毛玻璃')
-      .description('启用 WebQQ 毛玻璃效果'),
-    enableWebQQSend: Schema.boolean().default(readConfigDefault('enableWebQQSend')).extra('label', '消息发送')
-      .description('启用 WebQQ 消息发送功能'),
-    webQQChatStyle: Schema.union([
-      Schema.const('tim').description('TIM'),
-      Schema.const('qq').description('QQ'),
-    ]).default(readConfigDefault('webQQChatStyle')).role('radio').extra('label', '聊天页面样式')
-      .description('WebQQ 聊天页面样式'),
-    webQQTimBubbleTail: Schema.boolean().default(readConfigDefault('webQQTimBubbleTail')).extra('label', 'TIM 气泡尖角')
-      .description('显示 TIM 气泡小尖角'),
-    webQQIncomingBubbleStyle: Schema.union([
-      Schema.const('shadow').description('投影'),
-      Schema.const('outline').description('描边'),
-    ]).default(readConfigDefault('webQQIncomingBubbleStyle')).role('radio').extra('label', '对方气泡样式')
-      .description('投影为半透明白底加阴影，描边为白底加细边框；仅在亮色主题下生效'),
-    webQQColorMode: Schema.union([
-      Schema.const('auto').description('自动'),
-      Schema.const('light').description('明亮'),
-      Schema.const('dark').description('暗色'),
-    ]).default(readConfigDefault('webQQColorMode')).role('radio').extra('label', '颜色模式')
-      .description('自动模式跟随 ChatLuna 主题'),
-    webQQAccentColor: Schema.string().default(readConfigDefault('webQQAccentColor')).role('color').extra('label', '强调色')
-      .description('WebQQ 主题色'),
-    allowWebQQResize: Schema.boolean().default(readConfigDefault('allowWebQQResize')).extra('label', '允许调整窗口大小')
-      .description('允许拖动 WebQQ 边缘调整窗口宽高'),
-    webQQMarkRecalledMessages: Schema.boolean().default(readConfigDefault('webQQMarkRecalledMessages')).extra('label', '保留撤回的消息')
-      .description('保留被撤回的消息并显示删除线，关闭后显示撤回事件并移除原消息'),
-    hideWebQQGroupLevel: Schema.boolean().default(readConfigDefault('hideWebQQGroupLevel')).extra('label', '隐藏群等级')
-      .description('隐藏 WebQQ 消息中的群等级徽标'),
-    showWebQQAffinity: Schema.boolean().default(readConfigDefault('showWebQQAffinity')).extra('label', '显示好感度')
-      .description('在用户昵称右侧显示 ChatLuna 角色引擎记录的好感度'),
-    showWebQQCharacterThinking: Schema.boolean().default(readConfigDefault('showWebQQCharacterThinking')).extra('label', '显示内心活动')
-      .description('显示 ChatLuna 角色引擎的 think 内容'),
-    showWebQQThinkingTokens: Schema.boolean().default(readConfigDefault('showWebQQThinkingTokens')).extra('label', '显示 token 用量')
-      .description('显示 ChatLuna 回复的输入与输出 token'),
-    showWebQQThinkingTiming: Schema.boolean().default(readConfigDefault('showWebQQThinkingTiming')).extra('label', '显示耗时')
-      .description('显示 ChatLuna 回复的 TTFT、TPS 与总耗时'),
-  }).description('WebQQ 设置'),
+  }).description('历史与缓存').collapse(),
 
   Schema.object({
     onebotMockBotCount: Schema.natural().max(20).default(readConfigDefault('onebotMockBotCount')).extra('label', '模拟机器人数量')
@@ -135,7 +142,7 @@ export const Config: Schema<Config> = Schema.intersect([
       .description('只使用其他插件提供的虚拟 OneBot 机器人（例如 OneBot 沙盒），不接触真实机器人'),
     debug: Schema.boolean().default(readConfigDefault('debug')).extra('label', '调试日志')
       .description('输出调试信息'),
-  }).description('开发者选项'),
+  }).description('开发者选项').collapse(),
 ])
 
 // 双向键集断言：配置规格的键集与 `Config` 的键集必须完全相等，多一个少一个都编译失败。

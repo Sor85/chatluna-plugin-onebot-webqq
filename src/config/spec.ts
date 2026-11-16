@@ -30,14 +30,6 @@ const configSpec = {
   onebotSelfIds: { default: [] as string[] },
   onebotProtocol: { default: 'napcat' as WebQQProtocol },
 
-  // 历史与缓存
-  historyLimit: { default: 100 },
-  webQQMessageCacheLimit: { default: 100, mirrored: true },
-  webQQStorageBackend: { default: 'database' as WebQQStorageBackend, mirrored: true, blankIsUnset: true },
-  webQQImageCacheEnabled: { default: true },
-  webQQImageCacheLimitMB: { default: 100 },
-  webQQImageCacheItemLimitMB: { default: 10 },
-
   // 小胶囊设置
   enableCapsuleFrostedGlass: { default: true, mirrored: true },
   showWebQQCapsuleUnread: { default: true, mirrored: true },
@@ -45,20 +37,32 @@ const configSpec = {
   hiddenCapsuleActivityIds: { default: ['/logs', '/login', '/login/forgot', '/setup'], mirrored: true },
 
   // WebQQ 设置
-  enableWebQQFrostedGlass: { default: true, mirrored: true },
   enableWebQQSend: { default: false, mirrored: true },
   webQQChatStyle: { default: 'tim' as WebQQChatStyle, mirrored: true, blankIsUnset: true },
-  webQQTimBubbleTail: { default: true, mirrored: true },
-  webQQIncomingBubbleStyle: { default: 'shadow' as WebQQIncomingBubbleStyle, mirrored: true, blankIsUnset: true },
   webQQColorMode: { default: 'auto' as WebQQColorMode, mirrored: true, blankIsUnset: true },
   webQQAccentColor: { default: '#2563eb', mirrored: true, blankIsUnset: true },
+  enableWebQQFrostedGlass: { default: true, mirrored: true },
   allowWebQQResize: { default: false, mirrored: true },
+
+  // 消息显示
+  webQQTimBubbleTail: { default: true, mirrored: true },
+  webQQIncomingBubbleStyle: { default: 'shadow' as WebQQIncomingBubbleStyle, mirrored: true, blankIsUnset: true },
   webQQMarkRecalledMessages: { default: true },
   hideWebQQGroupLevel: { default: true, mirrored: true },
   showWebQQAffinity: { default: false, mirrored: true },
+
+  // 回复信息
   showWebQQCharacterThinking: { default: true },
   showWebQQThinkingTokens: { default: true, mirrored: true },
   showWebQQThinkingTiming: { default: true, mirrored: true },
+
+  // 历史与缓存
+  historyLimit: { default: 100 },
+  webQQMessageCacheLimit: { default: 100, mirrored: true },
+  webQQStorageBackend: { default: 'database' as WebQQStorageBackend, mirrored: true, blankIsUnset: true },
+  webQQImageCacheEnabled: { default: true },
+  webQQImageCacheLimitMB: { default: 100 },
+  webQQImageCacheItemLimitMB: { default: 10 },
 
   // 开发者选项
   onebotMockBotCount: { default: 0 },
