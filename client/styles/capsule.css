@@ -583,9 +583,9 @@
     translate 0.32s cubic-bezier(0.5, 0, 0.75, 0);
 }
 
-/* 收起后露出的把手只保留毛玻璃底与未读红点：贴右时把手是头像栈最左端，贴左时可能是长标题末尾，
-   内容被边缘切开会和红点叠在一起。滑动全程保持不透明，两侧动画才一致：位移过渡结束后 JS 加上
-   is-dock-settled，再淡出把手里残留的内容、淡入红点；滑出时内容立即恢复。
+/* 收起后露出的把手只保留毛玻璃底与在线状态灯：贴右时把手是头像栈最左端，贴左时可能是长标题末尾，
+   内容被边缘切开会和状态灯叠在一起。滑动全程保持不透明，两侧动画才一致：位移过渡结束后 JS 加上
+   is-dock-settled，再淡出把手里残留的内容、淡入状态灯；滑出时内容立即恢复。
    淡出用关键帧而不是过渡：收起时头像栈常常同时在折叠，Anime.js FLIP 会给头像容器加
    transition: none !important，过渡被吞掉后头像会瞬间消失。 */
 .onebot-webqq-host.is-dock-settled :is(.onebot-webqq__avatar-capsule, .onebot-webqq__body) {
@@ -603,34 +603,42 @@
   }
 }
 
-/* 把手宽 18px、胶囊高 50px：红点落在把手内、距屏幕边缘 4px，垂直居中。 */
-.onebot-webqq__dock-unread {
+/* 把手宽 18px、胶囊高 50px：状态灯落在把手内、距屏幕边缘 4px，垂直居中。颜色与头像角标 `.onebot-webqq__status` 一致。 */
+.onebot-webqq__dock-status {
   position: fixed;
   bottom: calc(var(--onebot-webqq-capsule-bottom, 56px) + 21px);
   z-index: 10002;
   width: 8px;
   height: 8px;
   border-radius: 999px;
-  background: #ef4444;
+  background: var(--k-color-danger, #f56c6c);
   box-shadow: 0 0 0 2px #ffffff;
   opacity: 0;
   transition: opacity 0.12s ease;
   pointer-events: none;
 }
 
-.onebot-webqq__dock-unread.is-color-dark {
+.onebot-webqq__dock-status.is-online {
+  background: var(--k-color-success, #67c23a);
+}
+
+.onebot-webqq__dock-status.is-pending {
+  background: var(--k-color-warning, #e49400);
+}
+
+.onebot-webqq__dock-status.is-color-dark {
   box-shadow: 0 0 0 2px #2c2c30;
 }
 
-.onebot-webqq-host.is-docked-right .onebot-webqq__dock-unread {
+.onebot-webqq-host.is-docked-right .onebot-webqq__dock-status {
   right: 4px;
 }
 
-.onebot-webqq-host.is-docked-left .onebot-webqq__dock-unread {
+.onebot-webqq-host.is-docked-left .onebot-webqq__dock-status {
   left: 4px;
 }
 
-.onebot-webqq-host.is-dock-settled .onebot-webqq__dock-unread {
+.onebot-webqq-host.is-dock-settled .onebot-webqq__dock-status {
   opacity: 1;
   transition: opacity 0.16s ease;
 }
@@ -638,7 +646,7 @@
 @media (prefers-reduced-motion: reduce) {
   .onebot-webqq-host :is(.onebot-webqq-dock-slide, .onebot-webqq__body),
   .onebot-webqq-host:is(.is-docked-left, .is-docked-right) :is(.onebot-webqq-dock-slide, .onebot-webqq__body),
-  .onebot-webqq__dock-unread {
+  .onebot-webqq__dock-status {
     transition: none;
   }
 }

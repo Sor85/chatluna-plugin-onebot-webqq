@@ -240,7 +240,7 @@ export function Capsule(props: { children?: React.ReactNode }) {
   // 观察窗、拖动、首次引导与键盘焦点都需要完整胶囊，期间不收回。
   const dockHidden = !!capsuleDock && !capsuleDragging && !webQQOpen && !dockHovered && !dockFocused && !avatarGuideVisible
 
-  // 收起位移真正停到边缘后才淡出把手里的残留内容、显示未读红点。不能用固定延迟：松手时指针常压在头像上，
+  // 收起位移真正停到边缘后才淡出把手里的残留内容、显示在线状态灯。不能用固定延迟：松手时指针常压在头像上，
   // 头像栈先展开再折叠会改写展开补偿，位移过渡被打断重来，实际收起时长不固定。
   React.useEffect(() => {
     if (!dockHidden) {
@@ -877,10 +877,10 @@ export function Capsule(props: { children?: React.ReactNode }) {
           </div>
         </CssTransition>
       </div>
-      {/* 贴边把手的未读红点按屏幕边缘固定定位，不放进胶囊：头像栈 FLIP 期间胶囊内的绝对定位会停在旧宽度上，
-          收起时红点会和胶囊错开。host 不带位移，fixed 直接相对视口。 */}
-      {capsuleDock && showUnread
-        ? <span className={['onebot-webqq__dock-unread', `is-color-${resolvedColorMode}`].join(' ')} aria-hidden="true"></span>
+      {/* 贴边把手的在线状态灯按屏幕边缘固定定位，不放进胶囊：头像栈 FLIP 期间胶囊内的绝对定位会停在旧宽度上，
+          收起时状态灯会和胶囊错开。host 不带位移，fixed 直接相对视口。 */}
+      {capsuleDock
+        ? <span className={['onebot-webqq__dock-status', statusClass, `is-color-${resolvedColorMode}`].join(' ')} aria-hidden="true"></span>
         : null}
       {props.children}
     </div>
